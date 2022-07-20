@@ -1,6 +1,5 @@
 # libraries required for this app
 
-
 flask
 # flask is a micro web framework used for routing our app
 
@@ -11,6 +10,4 @@ bcrypt
 # bcrypt is a password-hashing function
 
 gunicorn
-# gunicorn is a python web server gateway interface HTTP server
-
-
+# gunicorn is a python web server gateway interface HTTP server, used by Heroku to host our app

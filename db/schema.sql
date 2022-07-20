@@ -1,0 +1,5 @@
+-- TABLE CREATION --
+
+CREATE TABLE x (
+    
+);

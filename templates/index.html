@@ -4,9 +4,17 @@
 <div class="container">
     <h1>WELCOME</h1>
     <h3>- Log In -</h3>
-    <form>
-        <input type="email" name="email">
-        <input type="password" name="password">
+    <form action="/signup">
+        <fieldset class="field">
+            <legend>Username</legend>
+            <img src="/docs/icons/user_icon.png" alt="user icon" class="icon">
+            <input type="email" name="email">
+        </fieldset>
+        <fieldset class="field">
+            <img src="/docs/icons/pw_icon.png" alt="password icon" class="icon">
+            <legend>Password</legend> 
+            <input type="password" name="password">
+        </fieldset>
         <button>LOG IN</button>
     </form>
 </div>

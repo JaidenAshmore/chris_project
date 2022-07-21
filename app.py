@@ -6,7 +6,7 @@ app.secret_key = 'chs2022'
 
 @app.route('/')
 def index():
-    return 'INDEX PAGE'
+    return render_template("index.html")
 
 if __name__ == "__main__":
     app.run(debug=True)

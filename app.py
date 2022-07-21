@@ -6,7 +6,14 @@ app.secret_key = 'chs2022'
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    return render_template('index.html')
+
+@app.route('/login_action')
+def login_action():
+    username = request.form.get('username')
+    password = request.form.get('password')
+    return render_template("home.html")
+     
 
 @app.route('/signup')
 def signup():

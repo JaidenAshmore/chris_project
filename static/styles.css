@@ -1,21 +1,71 @@
 body {
-    background-color: rgb(123, 162, 233);
+    background-color: rgb(93, 144, 240);
 }
+/* GRID ASSIGNMENTS */
+
+
+/* CONTAINERS */
 .container {
     text-align: center;
     margin: 50px auto;
     width: 50%;
-    height: 50%;
+    height: auto;
     max-width: 300px;
-    max-height: 300px;
-    padding: 50px;
+    padding: 30px;
     border-radius: 10px;
     background-color: white;
 }
-.field {
+.frame {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: left;
+    border: solid rgb(122, 121, 121) 1px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    padding: 5px;
+}
+/* CLASSES */
+.login {
+    height: 25px;
+    width: 100%;
+    border: none;
+}
+.login:focus {
+    border: none;
+    outline: none
+}
+.icon {
+    height: 25px;
+    width: 25px;
+}
+.spacer-top {
+    margin: 30px 0;
+    width: 100%;
+    border-top: solid rgb(196, 193, 193) 1px;
+}
+.spacer-left {
+    margin: 0 10px;
+    border-left: solid rgb(196, 193, 193) 1px;
+    height: 25px;
+}
+
+/* ID's */
+#login_button {
+    width: 80%;
+    height: 45px;
+    background-color: rgb(93, 144, 240);
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+}
+#login_button:hover {
+    background-color: rgb(130, 170, 243);
+}
+#login_links {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    text-align: left;
-    margin-bottom: 20px;
 }

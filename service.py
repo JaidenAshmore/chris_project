@@ -1,7 +1,7 @@
 from flask import session
 
 # Check if the user is currently logged in
-def is_logged_in():
+def user_logged_in():
     if session.get('username') is not None:
         return True
 

@@ -5,4 +5,22 @@
 HOME PAGE
 <p class="msg">{{msg}}</p>
 
+
+{% if settings_clicked %}
+<div class="modal">
+    <div class="container password">
+        <form action="/">
+            <button id="button_close" formaction="/">X</button>
+        </form>
+        <h1>SETTINGS</h1>         
+        <form action="/settings_action" method="POST">
+            <input type="hidden" name="forgot" value="true">
+            <!-- give user ability to persalise account -->
+            <input type="checkbox">Activate something
+        </form>         
+        <p class="msg">{{msg}}</p>
+        </form>
+    </div>
+</div>
+{% endif %}
 {% endblock %}

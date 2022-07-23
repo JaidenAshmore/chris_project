@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, request, session
 from hash import hash, check
 from psql import sql_select, sql_write,get_secret_key
-from service import get_questions, is_logged_in
+from service import get_questions, user_logged_in
 
 app = Flask(__name__)
 app.secret_key = get_secret_key().encode()
@@ -10,7 +10,7 @@ app.secret_key = get_secret_key().encode()
 @app.route('/index')
 def index():
     # if user is logged in, skip login screen
-    if is_logged_in():
+    if user_logged_in():
         return render_template('home.html')
     forgot = request.args.get('forgot', '')
     stage = "1"
@@ -56,6 +56,7 @@ def login_action():
         if check(password, response[3]):
             session['user_id'] = response[0]
             session['username'] = response[1]
+            session['admin'] = response[6]
             msg = f"signed in as {session['username']}"
             return render_template('home.html', msg=msg)
         else:
@@ -103,7 +104,30 @@ def logout():
     msg = f"{session['username']} has been logged out successfully!"
     session.pop('user_id', None)
     session.pop('username', None)
+    session.pop('admin', None)
     return render_template("index.html", msg=msg)
+
+@app.route('/home')
+def home():
+    if user_logged_in():
+        return render_template('home.html')
+    else:
+        return redirect('/')
+
+@app.route('/admin')
+def admin():
+    if user_logged_in():
+        users = sql_select('SELECT * FROM users', None)
+        return render_template('admin.html', users=users)
+    else:
+        return redirect('/')
+
+@app.route('/settings')
+def settings():
+    if user_logged_in():
+        return render_template('home.html', settings_clicked=True)
+    else:
+        return redirect('/')
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<div class="container admin">
+    <h1>ADMIN</h1>
+    <h3>- User Management -</h3>
+    <table id="table-users">
+        <tr>
+            <th>USER ID</th>
+            <th>USERNAME</th>
+            <th>EMAIL</th>
+            <th>ADMIN</th>
+            <th>ACTION</th>
+        </tr>
+    {% for user in users %}
+        <tr>            
+            <td>{{user[0]}}</td>  <!--USER ID-->
+            <td>{{user[1]}}</td>  <!--USERNAME-->    
+            <td>{{user[2]}}</td>  <!--EMAIL-->
+            <td>{{user[6]}}</td>  <!--ADMIN (BOOLEAN)-->
+            <form action="/delete_user">
+                <input type="hidden" name="id" value="{{user[0]}}">
+                <td class="flex-col">
+                    <button formaction="/edit_user">Edit</button>
+                    <button>Delete</button>
+                </td>
+            </form>
+        </tr>
+    {% endfor %}
+    </table>
+    <p class="msg">{{msg}}</p>
+    <div class="spacer-top"></div>
+    <div id="login_links">
+        <a href="/home">Back</a>
+    </div>
+</div>
+<p class="msg">{{msg}}</p>
+
+{% endblock %}

@@ -1,6 +1,4 @@
-from operator import is_
 from flask import Flask, render_template, redirect, request, session
-
 from hash import hash, check
 from psql import sql_select, sql_write,get_secret_key
 from service import get_questions, is_logged_in
@@ -14,7 +12,6 @@ def index():
     # if user is logged in, skip login screen
     if is_logged_in():
         return render_template('home.html')
-
     forgot = request.args.get('forgot', '')
     stage = "1"
     return render_template('index.html', forgot=forgot, stage=stage)
@@ -38,26 +35,27 @@ def index_action():
             user_id = query[0][0] 
             new_password = hash(request.form.get('new_password'))
             sql_write('UPDATE users SET password =%s WHERE id=%s', new_password, user_id)
-            return redirect('/')
+            return render_template('home.html')
     else:
         stage = "1"
         question = ""
-        stored_answer = ""
-        msg = 'invalid email address'
+        msg = 'Invalid email address'
     return render_template('index.html', forgot=forgot, stage=stage, email=email, question=question, msg=msg)
 
 
 @app.route('/login_action', methods=['POST'])
 def login_action():
-    email = request.form.get('email').lower()
-    password = request.form.get('password')
+    email = request.form.get('email', '').lower()
+    password = request.form.get('password', '')
 
     query = sql_select('SELECT * FROM users WHERE email=%s', email)        
     if query:
-        query = query[0]
-        if check(password, query[3]):
-            session['username'] = query[1]
+        response = query[0]
+        if check(password, response[3]):
+            session['user_id'] = response[0]
+            session['username'] = response[1]
             msg = f"signed in as {session['username']}"
+            return render_template('home.html', msg=msg)
         else:
             msg = "Incorrect username and/or password"
         return render_template('index.html', msg=msg, query=query)
@@ -72,12 +70,12 @@ def signup():
 
 @app.route('/signup_action', methods=['POST'])
 def signup_action():
-    username = request.form.get('username').lower()
-    email = request.form.get('email').lower()
-    password = request.form.get('password')
-    verify_password = request.form.get('verify_password')
-    question = request.form.get('questions')
-    answer = request.form.get('answer').lower()
+    username = request.form.get('username', '').lower()
+    email = request.form.get('email', '').lower()
+    password = request.form.get('password', '')
+    verify_password = request.form.get('verify_password', '')
+    question = request.form.get('questions', '')
+    answer = request.form.get('answer', '').lower()
     hash_answer = hash(answer)
 
     # Prompt user if failed password verification  ---SWITCH THESE CHECKS TO JAVASCRIPT VALIDATION!
@@ -102,6 +100,7 @@ def signup_action():
 @app.route('/logout_action')
 def logout():
     msg = f"{session['username']} has been logged out successfully!"
+    session.pop('user_id', None)
     session.pop('username', None)
     return render_template("index.html", msg=msg)
 

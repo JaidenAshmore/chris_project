@@ -18,6 +18,14 @@ body {
     text-align: center;
     background-color: white;
 }
+.container.password {
+    margin: 80px auto;
+    min-width: 300px;
+    max-width: 550px;
+    min-height: 0;
+    height: auto;
+    border: solid rgb(13, 197, 234) 5px;
+}
 .modal {
     text-align: center;
     position: fixed;
@@ -41,11 +49,6 @@ body {
 .frame2 {
     padding: 20px 10px;
     justify-content: space-evenly;
-}
-.password {
-    margin: 80px auto;
-    min-height: 0;
-    height: auto;
 }
 .top_bar {
     width: 100%;
@@ -75,6 +78,15 @@ body {
 .flex-row {
     display: flex;
     flex-direction: row;
+}
+/* HEADERS */
+h1 {
+    font-size: 36px;
+}
+h1, h2, h3, h4 {
+    font-family: 'Monoton', cursive;
+    letter-spacing: 2px;
+    color:rgb(65, 12, 173)
 }
 /* CLASSES */
 .login {
@@ -121,8 +133,9 @@ body {
     border: none;
     border-radius: 6px;
     font-size: 16px;
+    transition: 0.5s ease all;
 }
-#login_button:hover {
+#wide_button:hover {
     background-color: rgb(130, 170, 243);
 }
 #login_links {

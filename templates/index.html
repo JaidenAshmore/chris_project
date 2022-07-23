@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block main %}
+
 <div class="container">
     <h1>WELCOME</h1>
     <h3>- Log In -</h3>
@@ -8,12 +9,12 @@
         <div class="frame">
             <img src="/static/icons/user_icon.png" alt="user icon" class="icon"> 
             <div class="spacer-left"></div>
-            <input type="email" name="email" placeholder="Email" class="login">
+            <input type="email" name="email" placeholder="Email" class="login" required>
         </div>
         <div class="frame">
             <img src="/static/icons/pw_icon.png" alt="password icon" class="icon"> 
             <p class="spacer-left"></p>
-            <input type="password" name="password" placeholder="Password" class="login">
+            <input type="password" name="password" placeholder="Password" class="login" required>
         </div>
         <button id="wide_button">LOG IN</button>
         <p class="msg">{{msg}}</p>
@@ -24,6 +25,7 @@
         </div>
     </form>
 </div>
+
 <!-- MODAL POPUP IF USER CLICKS 'FORGOT PASSWORD' -->
 {% if forgot %}
 <div class="modal">
@@ -39,7 +41,7 @@
                 <div class="frame">                
                     <img src="/static/icons/user_icon.png" alt="user icon" class="icon"> 
                     <div class="spacer-left"></div>
-                    <input type="email" name="email" placeholder="Email" class="login">
+                    <input type="email" name="email" placeholder="Email" class="login" required>
                 </div>
                 <button id="wide_button">Submit</button>
             {% endif %}
@@ -47,7 +49,7 @@
             {% if stage == "2" %}
                 <input type="hidden" name="stage" value="3">
                 <input type="hidden" name="email" value="{{email}}">
-                <p class="bold" style="color: red">Secret question: {{question}}</p>
+                <p class="bold" style="color: red">{{question}}</p>
                 <label for="answer" class="bold">Answer:</label>
                 <input class="input-field" type="text" name="answer" required>
                 <button id="wide_button">reset password</button>
@@ -56,12 +58,10 @@
             {% if stage == "3" %}
                 <input type="hidden" name="stage" value="4">
                 <input type="hidden" name="email" value="{{email}}">
-                <label for="new_password" class="bold">Set New Password:</label>
+                <label for="new_password" class="msg bold">Set New Password:</label>
                 <input class="input-field" type="password" name="new_password" required>
                 <button id="wide_button">save</button>
-            {% endif %}
-
-            
+            {% endif %}            
             <p class="msg">{{msg}}</p>
         </form>
     </div>

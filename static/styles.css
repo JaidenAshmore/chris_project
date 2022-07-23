@@ -10,12 +10,13 @@ body {
     margin: 50px auto;
     width: 50%;
     height: auto;
-    max-width: 300px;
+    max-width: 500px;
+    min-width: 280px;
     padding: 30px;
     border-radius: 10px;
     background-color: white;
 }
-.frame {
+.frame, .frame2 {
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -24,6 +25,32 @@ body {
     border-radius: 6px;
     margin-bottom: 20px;
     padding: 5px;
+}
+.frame2 {
+    padding: 20px 10px;
+    justify-content: space-evenly;
+}
+/* GENERIC STYLING*/
+.bold {
+    font-weight: bold;
+}
+.spacer-top {
+    margin: 30px 0;
+    width: 100%;
+    border-top: solid rgb(196, 193, 193) 1px;
+}
+.spacer-left {
+    margin: 0 10px;
+    border-left: solid rgb(196, 193, 193) 1px;
+    height: 25px;
+}
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+.flex-row {
+    display: flex;
+    flex-direction: row;
 }
 /* CLASSES */
 .login {
@@ -39,19 +66,19 @@ body {
     height: 25px;
     width: 25px;
 }
-.spacer-top {
-    margin: 30px 0;
-    width: 100%;
-    border-top: solid rgb(196, 193, 193) 1px;
+.input-field {
+    text-align: center;
+    width: 70%;
+    padding: 3px;
+    margin: 5px;
 }
-.spacer-left {
-    margin: 0 10px;
-    border-left: solid rgb(196, 193, 193) 1px;
-    height: 25px;
+.msg {
+    font-style: italic;
+    color: red;
 }
 
 /* ID's */
-#login_button {
+#wide_button {
     width: 80%;
     height: 45px;
     background-color: rgb(93, 144, 240);

@@ -1,5 +1,45 @@
 {% extends "base.html" %}
 
 {% block main %}
-    <!-- Content -->
+<div class="container">
+    {{username}}
+    {{password}}
+    {{email}}
+    {{question}}
+    {{answer}}
+
+    <h1>SIGN UP</h1>
+    <h3>- Create New Account -</h3>
+    <form action="/signup_action" method="POST">
+        <div class="frame2 flex-col">
+            <label for="username" class="bold">Username: </label> 
+            <input class="input-field" type="text" name="username" required>
+            <label for="email" class="bold">Email: </label> 
+            <input class="input-field" type="email" name="email" required>
+            <label for="password" class="bold">Password: </label> 
+            <input class="input-field" type="password" name="password" required>            
+            <label for="verify_password" class="bold">Re-enter Password: </label> 
+            <input class="input-field" type="password" name="verify_password" required>
+            <label for="sec_questions" class="bold">Security Question:</label>
+            <select class="input-field" name="questions">
+                    <option name="question" value="None"}>Select a question...</option>
+                {% for key in questions%}
+                    <option name="question" value={{key}}>{{questions[key]}}</option>
+                {% endfor %}
+            </select>
+            <label for="answer" class="bold">Your Answer:</label>
+            <input class="input-field" type="text" name="answer" required>
+        </div>
+        
+        <button id="wide_button">CREATE ACCOUNT</button>
+        <p class="msg">{{msg}}</p>
+        <div class="spacer-top"></div>
+        <div id="login_links">
+            <a href="/">Back</a>
+            <a href="#">Forgot Password?</a> 
+        </div>
+    </form>
+
+
+ </div>
 {% endblock %}

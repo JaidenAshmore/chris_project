@@ -6,8 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Base HTML template</title>
     <link rel="stylesheet" href="/static/styles.css">
+    <style>
+    {% if session['username'] %}        
+        body {
+            margin: 80px auto;
+        }
+    {% endif %}   
+    </style>
 </head>
 <body>
+{% if session['username'] %}        
+    <form class="top_bar" action="/logout_action">
+        <section class="inner_bar">
+            <p>WELCOME {{ session['username'].upper() }}!</p>
+            <button>Log Out</button>
+        </section>
+    </form>    
+{% endif %}   
+
 {% block main %}
     {# --- #}
 {% endblock %}

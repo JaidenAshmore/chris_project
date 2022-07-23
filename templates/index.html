@@ -4,12 +4,12 @@
 
 <div class="container">
     <h1>WELCOME</h1>
-    <h3>- Log In -</h3>
+    <h3>- Sign In -</h3>
     <form action="/login_action" method="POST">
         <div class="frame">
             <img src="/static/icons/user_icon.png" alt="user icon" class="icon"> 
             <div class="spacer-left"></div>
-            <input type="email" name="email" placeholder="Email" class="login" required>
+            <input type="email" name="email" placeholder="Email" value="{{email}}" class="login" required>
         </div>
         <div class="frame">
             <img src="/static/icons/pw_icon.png" alt="password icon" class="icon"> 
@@ -38,7 +38,7 @@
             <input type="hidden" name="forgot" value="true">
             {% if stage == "1" %}
                 <input type="hidden" name="stage" value="2">
-                <div class="frame">                
+                <div class="frame forgot">                
                     <img src="/static/icons/user_icon.png" alt="user icon" class="icon"> 
                     <div class="spacer-left"></div>
                     <input type="email" name="email" placeholder="Email" class="login" required>
@@ -49,18 +49,25 @@
             {% if stage == "2" %}
                 <input type="hidden" name="stage" value="3">
                 <input type="hidden" name="email" value="{{email}}">
-                <p class="bold" style="color: red">{{question}}</p>
-                <label for="answer" class="bold">Answer:</label>
-                <input class="input-field" type="text" name="answer" required>
-                <button id="wide_button">reset password</button>
+                <h5 class="core-color2 italic">"{{question}}"</h5>
+                <div class="frame forgot">
+                    <img src="/static/icons/question_icon.png" alt="question" class="icon"> 
+                    <p class="spacer-left"></p>
+                    <input type="text" name="answer" placeholder="Enter answer..." class="login" required>
+                </div> 
+                <button id="wide_button">Submit</button>
             {% endif %}
 
             {% if stage == "3" %}
                 <input type="hidden" name="stage" value="4">
                 <input type="hidden" name="email" value="{{email}}">
-                <label for="new_password" class="msg bold">Set New Password:</label>
-                <input class="input-field" type="password" name="new_password" required>
-                <button id="wide_button">save</button>
+                <h5 class="core-color2">Correct! Set your new Password below</h5>
+                <div class="frame forgot">
+                    <img src="/static/icons/pw_icon.png" alt="password icon" class="icon"> 
+                    <p class="spacer-left"></p>
+                    <input type="password" name="new_password" placeholder="Enter new password..." class="login" required>
+                </div>               
+                <button id="wide_button">Reset Password</button>
             {% endif %}            
             <p class="msg">{{msg}}</p>
         </form>

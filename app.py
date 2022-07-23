@@ -23,19 +23,21 @@ def index_action():
     email = request.form.get('email').lower()
     answer = request.form.get('answer', '').lower()
 
-    query = sql_select('SELECT id, question, answer FROM users WHERE email=%s', email)
-    if query:        
-        question = get_questions(query[0][1])        
+    query = sql_select('SELECT id, question, answer, username FROM users WHERE email=%s', email)
+    if query:
+        response = query[0]        
+        question = get_questions(response[1])        
         msg = ''
         if stage == "3":
-            if not check(answer, query[0][2]):                
+            if not check(answer, response[2]):                
                 stage = "2"
-                msg = 'Incorrect answer'
+                msg = 'Incorrect! Please try again...'
         elif stage == "4":
             user_id = query[0][0] 
             new_password = hash(request.form.get('new_password'))
             sql_write('UPDATE users SET password =%s WHERE id=%s', new_password, user_id)
-            return render_template('home.html')
+            msg = f"Password successfully updated for user '{response[3]}'"
+            return render_template('index.html', msg=msg)
     else:
         stage = "1"
         question = ""
@@ -77,16 +79,15 @@ def signup_action():
     question = request.form.get('questions', '')
     answer = request.form.get('answer', '').lower()
     hash_answer = hash(answer)
-
     # Prompt user if failed password verification  ---SWITCH THESE CHECKS TO JAVASCRIPT VALIDATION!
     if password != verify_password:
         msg = "Passwords do not match"
-        return render_template('index.html', msg=msg)
+        return render_template('signup.html', msg=msg)
     # Check if username in use
     query = sql_select('SELECT username FROM users WHERE username=%s', username)
     if query:
         msg = "Username already in use"
-        return render_template('index.html', msg=msg)
+        return render_template('signup.html', msg=msg)
     # Check if email in use
     query = sql_select('SELECT email FROM users WHERE email=%s', email)
     if query:

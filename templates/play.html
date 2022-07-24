@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<div class="container">
+    <h1>GUESS THE HERO</h1>
+    <h3>- EArn CArds! -</h3>
+    <div class="tile">
+        <!-- Function to load random selection with status=False -->
+        <!-- Randomise which button gets the correct answer -->
+        <!-- Select two other random names for multiple choice -->
+    </div>
+
+    
+    <img src="{{character['image']}}" alt="Hero image" class="character_img">
+    <div>CHEAT {{character['name']}}</div>
+    <form action="/play_action">
+        <input type="hidden" name="id" value="{{character['id']}}">
+        <input type="hidden" name="name" value="{{character['name']}}">
+        <input type="hidden" name="description" value="{{character['description']}}">
+        <input type="hidden" name="link" value="{{character['link']}}">
+        <div class="flex-row">
+            {% for button in buttons %}
+                <button class="button-hero bold">{{button}}</button>
+            {% endfor %} 
+        </div>      
+    </form>      
+    <i>{{attribute}}</i>
+</div>
+
+{% endblock %}

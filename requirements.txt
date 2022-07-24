@@ -11,3 +11,6 @@ bcrypt
 
 gunicorn
 # gunicorn is a python web server gateway interface HTTP server, used by Heroku to host our app
+
+requests
+# requests is a simple HTTP library which allows us to send HTTP/1.1 requests

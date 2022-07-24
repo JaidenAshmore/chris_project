@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, request, session
 from hash import hash, check
 from psql import sql_select, sql_write,get_secret_key
-from service import get_questions, user_logged_in
+from service import get_questions, user_logged_in, fetch_data
 
 app = Flask(__name__)
 app.secret_key = get_secret_key().encode()
@@ -9,7 +9,6 @@ app.secret_key = get_secret_key().encode()
 @app.route('/')
 @app.route('/index')
 def index():
-    # if user is logged in, skip login screen
     if user_logged_in():
         return render_template('home.html')
     forgot = request.args.get('forgot', '')
@@ -22,8 +21,7 @@ def index_action():
     stage = request.form.get('stage', '')
     email = request.form.get('email').lower()
     answer = request.form.get('answer', '').lower()
-
-    query = sql_select('SELECT id, question, answer, username FROM users WHERE email=%s', email)
+    query = sql_select('SELECT user_id, question, answer, username FROM users WHERE email=%s', email)
     if query:
         response = query[0]        
         question = get_questions(response[1])        
@@ -35,7 +33,7 @@ def index_action():
         elif stage == "4":
             user_id = query[0][0] 
             new_password = hash(request.form.get('new_password'))
-            sql_write('UPDATE users SET password =%s WHERE id=%s', new_password, user_id)
+            sql_write('UPDATE users SET password =%s WHERE user_id=%s', new_password, user_id)
             msg = f"Password successfully updated for user '{response[3]}'"
             return render_template('index.html', msg=msg)
     else:
@@ -49,7 +47,6 @@ def index_action():
 def login_action():
     email = request.form.get('email', '').lower()
     password = request.form.get('password', '')
-
     query = sql_select('SELECT * FROM users WHERE email=%s', email)        
     if query:
         response = query[0]
@@ -80,7 +77,7 @@ def signup_action():
     question = request.form.get('questions', '')
     answer = request.form.get('answer', '').lower()
     hash_answer = hash(answer)
-    # Prompt user if failed password verification  ---SWITCH THESE CHECKS TO JAVASCRIPT VALIDATION!
+    # Prompt user if failed password verification  ---SWITCH THESE CHECKS TO JAVASCRIPT VALIDATION?
     if password != verify_password:
         msg = "Passwords do not match"
         return render_template('signup.html', msg=msg)
@@ -95,10 +92,11 @@ def signup_action():
         msg = f"{email} is already registered. Please sign in"
         return render_template('index.html', msg=msg)
     password = hash(password)
-    sql_write('INSERT INTO users(username, email, password, question, answer) VALUES(%s,%s,%s,%s,%s)', username, email, password, question, hash_answer)
+    sql_write('INSERT INTO users(username, email, password, question, answer, admin) VALUES(%s,%s,%s,%s,%s,%s)', username, email, password, question, hash_answer, False)
     msg = f"Account successfully created! Please sign in"
     return render_template('index.html', msg=msg)
 
+# Logout current user and clear session data
 @app.route('/logout_action')
 def logout():
     msg = f"{session['username']} has been logged out successfully!"
@@ -114,6 +112,19 @@ def home():
     else:
         return redirect('/')
 
+# Use external API to populate page
+@app.route('/play')
+def play():
+    if user_logged_in():
+        data = fetch_data()
+        character = data[0]
+        attribute = data[1]
+        button_names = data[2]
+        return render_template('play.html', buttons=button_names, character=character, attribute=attribute)
+    else:
+        return redirect('/')
+
+# Allow anyone with the admin title to edit or delete other users
 @app.route('/admin')
 def admin():
     if user_logged_in():
@@ -122,6 +133,7 @@ def admin():
     else:
         return redirect('/')
 
+# Modal popup for user preferences
 @app.route('/settings')
 def settings():
     if user_logged_in():

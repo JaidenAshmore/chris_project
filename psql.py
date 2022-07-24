@@ -9,22 +9,22 @@ def get_secret_key():
     return os.environ.get('SECRET_KEY', 'abc')
 
 # SQL Select query
-def sql_select(query, paramater=None):
+def sql_select(query, *params):
     connection = psycopg2.connect(DATABASE_URL)
     cursor = connection.cursor()
-    if paramater is None:
+    if params is None:
         cursor.execute(query)
     else:
-        cursor.execute(query, [paramater])    
+        cursor.execute(query, params)    
     response = cursor.fetchall()
     connection.close()
     return response
 
 # SQL Write query
-def sql_write(query, *parameters):
+def sql_write(query, *params):
     connection = psycopg2.connect(DATABASE_URL)
     cursor = connection.cursor()
-    cursor.execute(query, parameters)
+    cursor.execute(query, params)
     connection.commit()
     connection.close()
     return

@@ -1,9 +1,18 @@
 {% extends "base.html" %}
 
 {% block main %}
-
-HOME PAGE
-<p class="msg">{{msg}}</p>
+<div class="container">
+    YOUR CARDS - Get more correct and add to your collection!
+    <!-- for card of cards -->
+    <!-- flexbox the results -->
+    <div class="tile">
+        <!-- SQL result to load all cards with status=True -->
+    </div>
+    <!-- endfor -->
+    <form action="/play">
+        <button>PLAY NOW</button>
+    </form>
+</div>
 
 
 {% if settings_clicked %}
@@ -16,11 +25,13 @@ HOME PAGE
         <form action="/settings_action" method="POST">
             <input type="hidden" name="forgot" value="true">
             <!-- give user ability to persalise account -->
-            <input type="checkbox">Activate something
+            <input type="checkbox">Activate party mode
+            <button>SAVE</button>
         </form>         
-        <p class="msg">{{msg}}</p>
+        
         </form>
     </div>
 </div>
 {% endif %}
+    <p class="msg">{{msg}}</p>
 {% endblock %}

@@ -1,7 +1,7 @@
 -- TABLE VALUES --
 
-INSERT INTO users (username, email, password, sec_question, sec_answer) 
-VALUES ('Chrispy','chris@ga.com','asdd', 1, 'yeah');
+INSERT INTO users (username, email, password, sec_question, sec_answer, as_admin) 
+VALUES ('Chris','chris@ga.com','Access', 1, 'access', True);
 
 
 

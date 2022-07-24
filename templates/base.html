@@ -9,21 +9,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Monoton&display=swap" rel="stylesheet">    <style>
     {% if session['username'] %}        
         body {
-            margin: 100px auto;
+            margin: 50px auto;
         }
     {% endif %}   
     </style>
 </head>
+
 <body>
+<div class="transparent-background-fixed">
 {% if session['username'] %}        
     <form class="top_bar" action="/logout_action">
         <section class="inner_bar">
             <h4>WELCOME {{ session['username'].upper() }}!</h4>
-        {% if session['admin'] %}
-            <form>
+            <form>                       
                 <div id="button_flex">
+                {% if session['admin'] %}             
                     <button class="button_top" id="admin" formaction="/admin">Admin</button>
-        {% endif %}
+                {% endif %}
                     <button class="button_top" id="home" formaction="/home">Home</button> 
                     <button class="button_top" id="logout" formaction="/logout_action">Logout</button>
                     <a href="/settings"><img src="/static/icons/cog_icon.png" alt="user icon" class="icon button_top" id="cog"></a>
@@ -36,5 +38,6 @@
 {% block main %}
     {# --- #}
 {% endblock %}
+</div>
 </body>
 </html>

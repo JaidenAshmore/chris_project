@@ -45,7 +45,14 @@ def fetch_data():
         'nameStartsWith': letter
     }
 
-    response = requests.get(url, params=payload).json()  
+    response = requests.get(url, params=payload).json() 
+
+    failed = []
+    while not response:
+        failed.append(letter)
+        letter = chr(randint(ord('A'), ord('Z')))
+        response = requests.get(url, params=payload).json() 
+
     attribute = response['attributionText'] # attribute Marvel for the use of the API
     characters = response['data']['results']
     

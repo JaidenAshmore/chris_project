@@ -1,7 +1,7 @@
 -- TABLE CREATION --
 
 CREATE TABLE users (            --SELECT *--
-    user_ID SERIAL PRIMARY KEY, --query[0]--
+    user_id SERIAL PRIMARY KEY,      --query[0]--
     username TEXT NOT NULL,     --query[1]--
     email TEXT NOT NULL,        --query[2]--
     password TEXT NOT NULL,     --query[3]--    
@@ -11,24 +11,16 @@ CREATE TABLE users (            --SELECT *--
 );
 
 CREATE TABLE cards (            --SELECT *--         
-    card_ID INTEGER NOT NULL,   --query[0]--  
-    name TEXT NOT NULL,         --query[1]--
-    description TEXT NOT NULL,  --query[2]--
-    image TEXT NOT NULL,        --query[3]--
-    link TEXT NOT NULL          --query[4]--
+    id SERIAL PRIMARY KEY,      --query[0]-- 
+    card_ID INTEGER NOT NULL,   --query[1]--  
+    name TEXT NOT NULL,         --query[2]--
+    description TEXT NOT NULL,  --query[3]--
+    image TEXT NOT NULL,        --query[4]--
+    link TEXT NOT NULL          --query[5]--
 );
 
-CREATE TABLE achievements (                             
-    user_ID INTEGER NOT NULL REFERENCES users(user_ID), 
-    card_ID INTEGER NOT NULL  
+CREATE TABLE achievements (
+    id SERIAL PRIMARY KEY,                          
+    user_ID INTEGER NOT NULL REFERENCES users(user_id), 
+    card_ID INTEGER NOT NULL
 );
-
-
-            dict.append({
-                'id' : key['id'],
-                'name' : key['name'],
-                'description' : key['description'],
-                'image' : key['thumbnail']['path'] + '.' + key['thumbnail']['extension'],
-                'link' : key['urls'][0]['url'],
-                # 'status' : status
-            })

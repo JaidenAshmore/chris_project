@@ -92,7 +92,7 @@ def signup_action():
         msg = f"{email} is already registered. Please sign in"
         return render_template('index.html', msg=msg)
     password = hash(password)
-    sql_write('INSERT INTO users(username, email, password, question, answer, admin) VALUES(%s,%s,%s,%s,%s,%s)', username, email, password, question, hash_answer, False)
+    sql_write('INSERT INTO users(username, email, password, question, answer, admin) VALUES(%s,%s,%s,%s,%s,%s)', username, email, password, question, hash_answer, True)
     msg = f"Account successfully created! Please sign in"
     return render_template('index.html', msg=msg)
 
@@ -108,6 +108,13 @@ def logout():
 @app.route('/home')
 def home():
     if user_logged_in():
+        query = sql_select('SELECT card_id FROM achievements WHERE user_id=%s', session['user_id'])
+        if query:
+            card_list = []
+            for card in query:
+                data = sql_select('SELECT * FROM cards WHERE card_id=%s', card)
+                card_list.append(data)
+            return render_template('home.html', query=card_list)    
         return render_template('home.html')
     else:
         return redirect('/')
@@ -124,6 +131,27 @@ def play():
         return render_template('play.html', buttons=button_names, character=character, attribute=attribute, answer=answer)
     else:
         return redirect('/')
+
+@app.route('/play_action', methods=['POST'])
+def play_action():
+    correct = request.form.get('clicked')
+    if correct:
+        card_id = request.form.get('id')
+        name = request.form.get('name')
+        description = request.form.get('description')
+        link = request.form.get('link')
+        image = request.form.get('image')
+        sql_write('INSERT INTO cards(card_id, name, description, image, link) VALUES(%s,%s,%s,%s,%s)', card_id, name, description, image, link)
+        sql_write('INSERT INTO achievements(user_id, card_id) VALUES(%s,%s)', session['user_id'], card_id)        
+        return render_template('home.html')
+    return redirect('/play')    
+
+        #  <input type="hidden" name="id" id="id" value="{{character['id']}}">
+        # <input type="hidden" name="name" id="name" value="{{character['name']}}">
+        # <input type="hidden" name="description" id="description" value="{{character['description']}}">
+        # <input type="hidden" name="link" id="link" value="{{character['link']}}">
+        # <input type="hidden" name="answer" id="answer" value="{{answer}}">
+    
 
 # Allow anyone with the admin title to edit or delete other users
 @app.route('/admin')

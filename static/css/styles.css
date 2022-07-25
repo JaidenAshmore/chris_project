@@ -132,7 +132,6 @@ body {
     justify-content: space-evenly;
     align-items: center;
 }
-
 /* HEADERS */
 h1 {
     font-size: 36px;
@@ -189,6 +188,7 @@ h1, h2, h3, h4, h5 {
     border-radius: 10px;
     text-transform: uppercase;
     background-color: rgba(150, 5, 234, 0.155);
+    transition: 2s ease all;
 }
 
 /* ID's */
@@ -291,8 +291,18 @@ th, td, tr {
         font-size: 12px;
         padding: 0;
     }
+}/* HERO CHOICES */
+.no-click {
+    pointer-events: none;
 }
-
+.correct {
+    background-color: green;
+    transition: 1.5s ease all;
+}
+.incorrect {
+    background-color: red;
+    transition: 1.5s ease all;
+}
 /* TEST AREA */
 .character_img {
     height: 300px;

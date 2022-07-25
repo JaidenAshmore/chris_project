@@ -10,7 +10,7 @@ app.secret_key = get_secret_key().encode()
 @app.route('/index')
 def index():
     if user_logged_in():
-        return render_template('home.html')
+        return redirect('/home')
     forgot = request.args.get('forgot', '')
     stage = "1"
     return render_template('index.html', forgot=forgot, stage=stage)
@@ -54,8 +54,7 @@ def login_action():
             session['user_id'] = response[0]
             session['username'] = response[1]
             session['admin'] = response[6]
-            msg = f"signed in as {session['username']}"
-            return render_template('home.html', msg=msg)
+            return redirect('/home')
         else:
             msg = "Incorrect username and/or password"
         return render_template('index.html', msg=msg, query=query)
@@ -92,7 +91,7 @@ def signup_action():
         msg = f"{email} is already registered. Please sign in"
         return render_template('index.html', msg=msg)
     password = hash(password)
-    sql_write('INSERT INTO users(username, email, password, question, answer, admin) VALUES(%s,%s,%s,%s,%s,%s)', username, email, password, question, hash_answer, True)
+    sql_write('INSERT INTO users(username, email, password, question, answer, admin) VALUES(%s,%s,%s,%s,%s,%s)', username, email, password, question, hash_answer, False)
     msg = f"Account successfully created! Please sign in"
     return render_template('index.html', msg=msg)
 
@@ -121,8 +120,9 @@ def home():
                     'link': data[0][5]
                     })
             count = sql_select('SELECT count(*) FROM achievements WHERE user_id=%s', session['user_id'])[0][0]
-            return render_template('home.html', card_list=card_list, count=count)    
-        return render_template('home.html')
+            return render_template('home.html', card_list=card_list, count=count)
+        msg="You have not earnt any cards..."        
+        return render_template('home.html', msg=msg)
     else:
         return redirect('/')
 

@@ -9,10 +9,15 @@
 
 <div class="container home">
     <h1>UNLOCKED CARDS</h1>
+    {% if count %}
     <h4> - You have collected <span class="core-color2" style="font-size: 22px">{{count}}</span> cards! - </h4>
+    {% else %}
+    <h4>- Welcome Newbie! - </h4>
+    {% endif %}
     <form action="/play">
         <button class="button-hero"id="button_wide">EARN MORE CARDS!</button>
     </form>
+    <p class="msg">{{msg}}</p>
     <div class="flex-row">
         <div class="tile">            
             {% for card in card_list %}
@@ -27,7 +32,6 @@
         </div>
     </div>
 </div>
-
 
 {% if settings_clicked %}
 <div class="modal">
@@ -47,5 +51,5 @@
     </div>
 </div>
 {% endif %}
-    <p class="msg">{{msg}}</p>
+
 {% endblock %}

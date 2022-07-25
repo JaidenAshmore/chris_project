@@ -112,9 +112,16 @@ def home():
         if query:
             card_list = []
             for card in query:
-                data = sql_select('SELECT * FROM cards WHERE card_id=%s', card)
-                card_list.append(data)
-            return render_template('home.html', query=card_list)    
+                data = sql_select('SELECT * FROM cards WHERE card_id=%s ORDER BY id', card)
+                card_list.append({
+                    'card_id': data[0][1],
+                    'name': data[0][2],
+                    'description': data[0][3],
+                    'url': data[0][4],
+                    'link': data[0][5]
+                    })
+            count = sql_select('SELECT count(*) FROM achievements WHERE user_id=%s', session['user_id'])[0][0]
+            return render_template('home.html', card_list=card_list, count=count)    
         return render_template('home.html')
     else:
         return redirect('/')
@@ -143,15 +150,7 @@ def play_action():
         image = request.form.get('image')
         sql_write('INSERT INTO cards(card_id, name, description, image, link) VALUES(%s,%s,%s,%s,%s)', card_id, name, description, image, link)
         sql_write('INSERT INTO achievements(user_id, card_id) VALUES(%s,%s)', session['user_id'], card_id)        
-        return render_template('home.html')
     return redirect('/play')    
-
-        #  <input type="hidden" name="id" id="id" value="{{character['id']}}">
-        # <input type="hidden" name="name" id="name" value="{{character['name']}}">
-        # <input type="hidden" name="description" id="description" value="{{character['description']}}">
-        # <input type="hidden" name="link" id="link" value="{{character['link']}}">
-        # <input type="hidden" name="answer" id="answer" value="{{answer}}">
-    
 
 # Allow anyone with the admin title to edit or delete other users
 @app.route('/admin')

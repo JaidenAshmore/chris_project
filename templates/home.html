@@ -1,20 +1,31 @@
 {% extends "base.html" %}
 
 {% block main %}
-<div class="container">
-    <h1>YOUR CARDS</h1>
-    
-    <h4> - Get more correct and add to your collection! </h4>
-    {{query}}
-    <!-- for card of cards -->
-    <!-- flexbox the results -->
-    <div class="tile">
-        <!-- SQL result to load all cards with status=True -->
-    </div>
-    <!-- endfor -->
+<style>
+.transparent-background-fixed {
+    position: relative;
+}
+</style>
+
+<div class="container home">
+    <h1>UNLOCKED CARDS</h1>
+    <h4> - You have collected <span class="core-color2" style="font-size: 22px">{{count}}</span> cards! - </h4>
     <form action="/play">
-        <button>PLAY NOW</button>
+        <button class="button-hero"id="button_wide">EARN MORE CARDS!</button>
     </form>
+    <div class="flex-row">
+        <div class="tile">            
+            {% for card in card_list %}
+            <div class="card" style="background-image:'{{card['url']}}'">
+                <img src="{{card['url']}}" alt="Hero image" class="tile-image" height="150px">
+                <p>CARD ID: {{card['card_id']}} </p>
+                <p>NAME: {{card['name']}}</p>
+                <p>DESCRIPTION: {{card['description']}}</p>
+                
+            </div>
+            {% endfor %}           
+        </div>
+    </div>
 </div>
 
 

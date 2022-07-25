@@ -1,6 +1,8 @@
 from flask import session
 import requests
-from random import Random, randint, shuffle
+import string
+import random
+from random import randint, shuffle, choice
 import hashlib
 import time
 from psql import sql_select
@@ -29,7 +31,11 @@ def get_questions(pos=None):
 # Access marvel api (took a while to figure this out)
 # Store results in new dict, ignoring results that do not have an image or description
 def fetch_data():
+    excluded_letters = 'EGJKLOQ'
     letter = chr(randint(ord('A'), ord('Z')))
+    while letter in excluded_letters:
+        letter = chr(randint(ord('A'), ord('Z')))
+
     url = 'http://gateway.marvel.com/v1/public/characters'
     public = 'd609fc87a5b2e7b633e37e0e4cdf5553'
     private = '082dff72dc33db36fd9194479cc71a83b9cf62d9'
@@ -47,12 +53,6 @@ def fetch_data():
 
     response = requests.get(url, params=payload).json() 
 
-    failed = []
-    while not response:
-        failed.append(letter)
-        letter = chr(randint(ord('A'), ord('Z')))
-        response = requests.get(url, params=payload).json() 
-
     attribute = response['attributionText'] # attribute Marvel for the use of the API
     characters = response['data']['results']
     
@@ -67,6 +67,10 @@ def fetch_data():
                 'image' : key['thumbnail']['path'] + '.' + key['thumbnail']['extension'],
                 'link' : key['urls'][0]['url'],
             })
+            
+    # catching errors for letters that need to be excluded
+    if not dict:
+        print(f'$$$$$$$$$$$$$$$ {letter} $$$$$$$$$$$$$$$$$$')
 
     index = randint(0, len(dict)-1)
     selection = dict[index]

@@ -119,8 +119,9 @@ def play():
         data = fetch_data()
         character = data[0]
         attribute = data[1]
-        button_names = data[2]
-        return render_template('play.html', buttons=button_names, character=character, attribute=attribute)
+        button_names = data[2]['buttons']
+        answer = data[2]['answer']
+        return render_template('play.html', buttons=button_names, character=character, attribute=attribute, answer=answer)
     else:
         return redirect('/')
 

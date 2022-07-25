@@ -1,6 +1,6 @@
 from flask import session
 import requests
-from random import randint, shuffle
+from random import Random, randint, shuffle
 import hashlib
 import time
 from psql import sql_select
@@ -30,13 +30,22 @@ def get_questions(pos=None):
 # Store results in new dict, ignoring results that do not have an image or description
 def fetch_data():
     letter = chr(randint(ord('A'), ord('Z')))
-    pub = 'd609fc87a5b2e7b633e37e0e4cdf5553'
-    pvt = '082dff72dc33db36fd9194479cc71a83b9cf62d9'
-    ts = str(time.time())
-    string = ts + pvt + pub
+    url = 'http://gateway.marvel.com/v1/public/characters'
+    public = 'd609fc87a5b2e7b633e37e0e4cdf5553'
+    private = '082dff72dc33db36fd9194479cc71a83b9cf62d9'
+    timestamp = str(time.time())
+    string = timestamp + private + public
     hashed = hashlib.md5(string.encode()).hexdigest()
     
-    response = requests.get(f'http://gateway.marvel.com/v1/public/characters?ts={ts}&apikey={pub}&hash={hashed}&limit=100&nameStartsWith={letter}').json()  
+    payload = {
+        'ts': timestamp,
+        'apikey': public,
+        'hash': hashed,
+        'limit': 100,
+        'nameStartsWith': letter
+    }
+
+    response = requests.get(url, params=payload).json()  
     attribute = response['attributionText'] # attribute Marvel for the use of the API
     characters = response['data']['results']
     
@@ -46,7 +55,7 @@ def fetch_data():
         if (not query) and (key['thumbnail']['path'] != 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available') and (key['description'] != ""):
             dict.append({
                 'id' : key['id'],
-                'name' : key['name'].split("(")[0],
+                'name' : key['name'],
                 'description' : key['description'],
                 'image' : key['thumbnail']['path'] + '.' + key['thumbnail']['extension'],
                 'link' : key['urls'][0]['url'],
@@ -56,36 +65,32 @@ def fetch_data():
     selection = dict[index]
 
     # Generate random button names
-    # Ensuring they are unique (to avoid duplicates) 
-    # Removing any unnecessary info from name string
-    num1 = randint(0, len(characters)-1)    
-    random1 = characters[num1]['name']    
-    while random1 == selection['name']:
-        num1 = randint(0, len(characters)-1)    
-        random1 = characters[num1]['name']
-    if random1.split("("):
-        random1 = random1.split("(")[0]
-    if random1.split("/"):
-        random1 = random1.split("/")[0]
+    # Ensuring they are unique (to avoid duplicates)     
+    choices = {
+        'buttons': [split(selection['name'])],
+        'answer': split(selection['name'])
+    }
+    buttons = choices['buttons']
+    count = 0
+    while count < 2:
+        num = randint(0, len(characters)-1)
+        random_name = split(characters[num]['name'])
+        if random_name not in buttons:
+            buttons.append(random_name)
+            count += 1
 
-    num2 = randint(0, len(characters)-1)
-    random2 = characters[num2]['name']
-    while random2 == selection['name'] or random2 == random1:
-        num2 = randint(0, len(characters)-1)    
-        random2 = characters[num2]['name']    
-    if random2.split("("):
-        random2 = random2.split("(")[0]   
-    if random2.split("/"):
-        random2 = random2.split("/")[0] 
-
-    buttons = [selection['name'], random1, random2] 
+    # buttons = [selection['name'], random1, random2] 
     shuffle(buttons)
-
-    return selection, attribute, buttons
-
+    return selection, attribute, choices
 
 
-
+# Removes any unnecessary info from string
+def split(string):
+    if string.split("("):
+        string = string.split("(")[0]
+    if string.split("/"):
+        string = string.split("/")[0]
+    return string
 
 
 

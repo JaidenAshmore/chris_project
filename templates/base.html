@@ -26,14 +26,31 @@
                 {% if session['admin'] %}             
                     <button class="button_top" id="admin" formaction="/admin">Admin</button>
                 {% endif %}
-                    <button class="button_top" id="home" formaction="/home">Home</button> 
+                    <button class="button_top" id="home" formaction="/home">Home</button>
+                    <button class="button_top leader" id="leaderboard" formaction="/home">Leaderboard</button>
                     <button class="button_top" id="logout" formaction="/logout_action">Logout</button>
-                    <a href="/settings"><img src="/static/icons/cog_icon.png" alt="user icon" class="icon button_top" id="cog"></a>
+                    <img src="/static/icons/cog_icon.png" alt="user icon" class="icon button_top" id="cog">
                 </div>
             </form>
         </section>
     </form>    
 {% endif %}   
+
+{% if session['username'] %}
+<div id="modal">
+    <div class="container password">
+        <button id="button_close">X</button>
+        <h1>SETTINGS</h1>         
+        <form action="/home">
+            <!-- give user ability to personalise account -->
+            <input type="checkbox" id="party_mode">Activate party mode
+            <button id="settings_button">SAVE</button>
+        </form>         
+    </div>
+</div>
+{% endif %}
+
+<script src="/static/js/settings.js"></script>
 
 {% block main %}
     {# --- #}

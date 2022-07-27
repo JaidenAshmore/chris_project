@@ -1,12 +1,4 @@
-body {
-    height: 1500px;
-    width: 100%;
-    background-image:
-    linear-gradient(red, transparent),
-    linear-gradient(to top left, lime, transparent),
-    linear-gradient(to top right, blue, transparent);
-    background-blend-mode: screen;
-}
+
 /* KEYFRAME ANIMNATIONS */
 @keyframes wave {
     0% {
@@ -24,6 +16,51 @@ body {
     100% {
         border-image-source: linear-gradient(to top left, #c80000, rgb(255, 230, 0));
     }
+}
+@keyframes partymode {
+    0% {
+        background-image:
+        linear-gradient(red, transparent),
+        linear-gradient(to top left, lime, transparent),
+        linear-gradient(to top right, blue, transparent);
+    }
+    25% {
+        background-image:
+        linear-gradient(red, transparent),
+        linear-gradient(to top right, lime, transparent),
+        linear-gradient(to bottom right, blue, transparent);
+    }
+    50% {
+        background-image:
+        linear-gradient(red, transparent),
+        linear-gradient(to bottom right, lime, transparent),
+        linear-gradient(to bottom left, blue, transparent);
+    }
+    50% {
+        background-image:
+        linear-gradient(red, transparent),
+        linear-gradient(to bottom left, lime, transparent),
+        linear-gradient(to top left, blue, transparent);
+    }
+    100% {
+        background-image:
+        linear-gradient(red, transparent),
+        linear-gradient(to top left, lime, transparent),
+        linear-gradient(to top right, blue, transparent);
+    }
+}
+
+body {
+    height: 1500px;
+    width: 100%;
+    background-image:
+    linear-gradient(red, transparent),
+    linear-gradient(to top left, lime, transparent),
+    linear-gradient(to top right, blue, transparent);
+    background-blend-mode: screen;
+}
+.party {
+    animation: partymode 6s infinite;
 }
 /* GRID ASSIGNMENTS */
 
@@ -48,13 +85,9 @@ body {
     text-align: center;
     background-color: rgba(255, 255, 255);
 }
-.container.home {
+.container.wide {
     width: 80%;
     max-width: none;
-}
-.container.admin {
-    min-width: 440px;
-    max-width: 800px;
 }
 .container.password {
     margin: 80px auto;
@@ -62,16 +95,6 @@ body {
     max-width: 550px;
     min-height: 0;
     border: solid rgb(13, 197, 234) 5px;
-}
-.modal {
-    text-align: center;
-    position: fixed;
-    z-index: 99; 
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(61, 60, 60, 0.897);
 }
 .frame, .frame2 {
     display: flex;
@@ -119,6 +142,7 @@ body {
     padding: 10px;
     border: solid black 1px;
     border-radius: 10px;
+    overflow: hidden;
     /* background-color: rgb(204, 204, 193); */
 }
 /* GENERIC STYLING*/
@@ -180,10 +204,15 @@ h1, h2, h3, h4, h5 {
 .input-field {
     text-align: center;
     width: 70%;
+    max-width: 350px;
     padding: 3px;
     margin: 5px;
 }
 .msg {
+    text-align: center;
+    width:100%;
+    height: 50px;
+    border: none;
     font-style: italic;
     color: red;
 }
@@ -211,10 +240,9 @@ h1, h2, h3, h4, h5 {
     background-color: rgba(150, 5, 234, 0.155);
     transition: 2s ease all;
 }
-
-/* ID's */
-#button_wide {
+.button_wide {
     width: 80%;
+    max-width: 400px;
     height: 45px;
     margin: 15px 0;
     background-color: rgb(93, 144, 240);
@@ -222,12 +250,25 @@ h1, h2, h3, h4, h5 {
     font-weight: bold;
     text-transform: uppercase;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 16px;
     transition: 0.5s ease all;
 }
-#button_wide:hover {
+.button_wide:hover {
     background-color: rgb(130, 170, 243);
+    cursor: pointer;
+}
+/* ID's */
+#modal {
+    visibility: hidden;
+    text-align: center;
+    position: fixed;
+    z-index: 99; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(61, 60, 60, 0.897);
 }
 #login_links {
     display: flex;
@@ -254,15 +295,19 @@ h1, h2, h3, h4, h5 {
     border-image-source: linear-gradient(to top left, #c80000, rgb(255, 230, 0));
     padding: 3px;    
     animation: wave 4s infinite;
-    transition: 0.5s ease all;
+    transition: 0.2s ease all;
 }
 .button_top:hover {
     background-color: rgb(251, 227, 227);
+    cursor: pointer;
 }
-#logout, #admin, #home {
+#logout, #admin, #home, #leaderboard {
     padding: 7.5px;
     width: 75px;
     font-weight: bold;
+}
+#leaderboard {
+    width: 103px;
 }
 #table-users {
     margin: 40px auto;
@@ -275,6 +320,23 @@ th, td, tr {
     border: solid black 1px;
     background-color: rgb(190, 245, 250);
     padding: 3px;
+}
+/* HERO CHOICES */
+.character_img {
+    height: auto;
+    width: 100%;
+    border-radius: 15px;
+}
+.no-click {
+    pointer-events: none;
+}
+.correct {
+    background-color: green;
+    transition: 1.5s ease all;
+}
+.incorrect {
+    background-color: red;
+    transition: 1.5s ease all;
 }
 
 /* MEDIA QUERIES */
@@ -312,20 +374,15 @@ th, td, tr {
         font-size: 12px;
         padding: 0;
     }
-}/* HERO CHOICES */
-.no-click {
-    pointer-events: none;
+    .inner_bar h4 {
+        display: none;
+    }
+    .inner_bar {
+        justify-content: center;
+    }
+    .top_bar {
+        width: 100%;
+    }
 }
-.correct {
-    background-color: green;
-    transition: 1.5s ease all;
-}
-.incorrect {
-    background-color: red;
-    transition: 1.5s ease all;
-}
+
 /* TEST AREA */
-.character_img {
-    height: 300px;
-    border-radius: 15px;
-}

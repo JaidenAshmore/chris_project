@@ -6,6 +6,7 @@ from random import randint, shuffle, choice
 import hashlib
 import time
 from psql import sql_select
+from hash import hash
 
 # Check if the user is currently logged in
 def user_logged_in():
@@ -102,6 +103,20 @@ def split(string):
     if string.split("/"):
         string = string.split("/")[0]
     return string
+
+
+# Reset password to a random string
+
+def reset_password():
+    number = randint(3, 5)
+    new_password = ''
+    n = 0
+    while n < number:
+        letter = chr(randint(ord('A'), ord('Z')))
+        no = randint(0, 9)
+        new_password += letter + str(no)
+        n += 1
+    return new_password
 
 
 

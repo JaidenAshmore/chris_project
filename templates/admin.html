@@ -2,7 +2,7 @@
 
 {% block main %}
 
-<div class="container admin">
+<div class="container wide">
     <h1>ADMIN</h1>
     <h3>- User Management -</h3>
     <table id="table-users">
@@ -11,7 +11,9 @@
             <th>USERNAME</th>
             <th>EMAIL</th>
             <th>ADMIN</th>
+            {% if not confirm_delete and not edit_user %}
             <th>ACTION</th>
+            {% endif %}
         </tr>
     {% for user in users %}
         <tr>            
@@ -19,23 +21,49 @@
             <td>{{user[1]}}</td>  <!--USERNAME-->    
             <td>{{user[2]}}</td>  <!--EMAIL-->
             <td>{{user[6]}}</td>  <!--ADMIN (BOOLEAN)-->
-            <form action="/delete_user">
+            {% if not confirm_delete and not edit_user %}
+            <form action="/delete_user" method="POST">
                 <input type="hidden" name="id" value="{{user[0]}}">
                 <td class="flex-col">
-                    <!-- CREATE EDIT PAGE / CODE TO DELETE USER BY ID : MODAL TO CONFIRM DELETION? -->
                     <button formaction="/edit_user" class="button-users">Edit</button>
+                    {% if not user[6] %}
                     <button class="button-users">Delete</button>
+                    {% endif %}
                 </td>
             </form>
+            {% endif %}
         </tr>
     {% endfor %}
     </table>
-    <p class="msg">{{msg}}</p>
+    {% if confirm_delete %}
+        <form action="/delete_user" method="POST">
+            <input type="hidden" name="id" value="{{users[0][0]}}">
+            <input type="hidden" name="confirm_delete" value="True">
+            <p class="msg"><b>WARNING:</b> This will delete the user ({{users[0][1].upper()}}) and all of their saved files!</p>
+            <button class="button_wide">CONFIRM DELETE</button>
+        </form>
+    {% endif %}
+    {% if edit_user %}
+    <form action="/edit_action" method="POST">
+        <input type="hidden" name="id" value="{{users[0][0]}}">
+        <input type="checkbox" name="reset" value=True>Reset Password</input>
+        <input type="checkbox" name="wipe" value=True>Wipe Cards</input>
+        {% if users[0][6] %}
+            <input type="checkbox" name="remove_admin" value=True>Remove Admin</input>
+        {% else %}
+            <input type="checkbox" name="make_admin" value=True>Make Admin</input>
+        {% endif %}
+        <button class="button_wide">UPDATE</button>
+    </form>
+{% endif %}
+{% if msg %}
+    <textarea class="msg">{{msg}}</textarea>
+{% endif %}
     <div class="spacer-top"></div>
     <div id="login_links">
-        <a href="/home">Back</a>
+        <a href="/home">Home</a>
     </div>
 </div>
-<p class="msg">{{msg}}</p>
+
 
 {% endblock %}

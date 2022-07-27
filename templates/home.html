@@ -7,16 +7,28 @@
 }
 </style>
 
-<div class="container home">
+<div class="container wide">
     <h1>UNLOCKED CARDS</h1>
     {% if count %}
-    <h4> - You have collected <span class="core-color2" style="font-size: 22px">{{count}}</span> cards! - </h4>
+    <h4> - You hAve collected <span class="core-color2" style="font-size: 22px">{{count}}</span> cArds! - </h4>
     {% else %}
     <h4>- Welcome Newbie! - </h4>
     {% endif %}
-    <form action="/play">
-        <button class="button-hero"id="button_wide">EARN MORE CARDS!</button>
+    <form action='/play'>
+        <button class="button-hero button_wide" id="click_to_play">CLICK TO PLAY!</button>
     </form>
+    {% if count %}
+    <form action='/home'>
+        <select name="filter">            
+            <option value="card_id/False">Select an option...</option>
+            <option value="id/True">Recently added</option>
+            <option value="name/False">Alphabetical (A to Z)</option>
+            <option value="name/True">Alphabetical (Z to A)</option>            
+        </select>
+        <button>FILTER</button>
+    </form>
+    {% endif %}
+
     <p class="msg">{{msg}}</p>
     <div class="flex-row">
         <div class="tile">            
@@ -33,23 +45,5 @@
     </div>
 </div>
 
-{% if settings_clicked %}
-<div class="modal">
-    <div class="container password">
-        <form action="/">
-            <button id="button_close" formaction="/">X</button>
-        </form>
-        <h1>SETTINGS</h1>         
-        <form action="/settings_action" method="POST">
-            <input type="hidden" name="forgot" value="true">
-            <!-- give user ability to persalise account -->
-            <input type="checkbox">Activate party mode
-            <button>SAVE</button>
-        </form>         
-        
-        </form>
-    </div>
-</div>
-{% endif %}
 
 {% endblock %}

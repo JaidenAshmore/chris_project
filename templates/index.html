@@ -16,7 +16,7 @@
             <p class="spacer-left"></p>
             <input type="password" name="password" placeholder="Password" class="login" required>
         </div>
-        <button id="button_wide">LOG IN</button>
+        <button class="button_wide">LOG IN</button>
         <p class="msg">{{msg}}</p>
         <div class="spacer-top"></div>
         <div id="login_links">
@@ -43,7 +43,7 @@
                     <div class="spacer-left"></div>
                     <input type="email" name="email" placeholder="Email" class="login" required>
                 </div>
-                <button id="button_wide">Submit</button>
+                <button class="button_wide">Submit</button>
             {% endif %}
 
             {% if stage == "2" %}
@@ -55,7 +55,7 @@
                     <p class="spacer-left"></p>
                     <input type="text" name="answer" placeholder="Enter answer..." class="login" required>
                 </div> 
-                <button id="button_wide">Submit</button>
+                <button class="button_wide">Submit</button>
             {% endif %}
 
             {% if stage == "3" %}
@@ -67,7 +67,7 @@
                     <p class="spacer-left"></p>
                     <input type="password" name="new_password" placeholder="Enter new password..." class="login" required>
                 </div>               
-                <button id="button_wide">Reset Password</button>
+                <button class="button_wide">Reset Password</button>
             {% endif %}            
             <p class="msg">{{msg}}</p>
         </form>

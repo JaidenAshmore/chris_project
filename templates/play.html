@@ -4,15 +4,8 @@
 <div class="container">
     <h1>GUESS THE HERO</h1>
     <h3>- EArn CArds! -</h3>
-    <div class="tile">
-        <!-- Function to load random selection with status=False -->
-        <!-- Randomise which button gets the correct answer -->
-        <!-- Select two other random names for multiple choice -->
-    </div>
-
-    
     <img src="{{character['image']}}" alt="Hero image" class="character_img">
-    <div>CHEAT MODE ACTIVE: {{answer}}</div>
+    <!-- <div>CHEAT MODE ACTIVE: {{answer}}</div> -->
     <form action="/play_action" id="hero-form" method="POST">
         <input type="hidden" name="id" id="id" value="{{character['id']}}">
         <input type="hidden" name="name" id="name" value="{{character['name']}}">

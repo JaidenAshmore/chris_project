@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block title %}
+    Card Collector - Home
+{% endblock %}
+
 {% block main %}
 <style>
 .transparent-background-fixed {
@@ -15,7 +19,7 @@
     <h4>- Welcome Newbie! - </h4>
     {% endif %}
     <form action='/play'>
-        <button class="button-hero button_wide" id="click_to_play">CLICK TO PLAY!</button>
+        <button class="button_wide" id="click_to_play">CLICK TO PLAY!</button>
     </form>
     {% if count %}
     <form action='/home'>
@@ -44,6 +48,5 @@
         </div>
     </div>
 </div>
-
 
 {% endblock %}

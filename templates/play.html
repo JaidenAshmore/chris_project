@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block title %}
+    Card Collector - Earn more cards!
+{% endblock %}
+
 {% block main %}
 <div class="container">
     <h1>GUESS THE HERO</h1>
@@ -13,7 +17,7 @@
         <input type="hidden" name="link" id="link" value="{{character['link']}}">
         <input type="hidden" name="image" id="link" value="{{character['image']}}">
         <input type="hidden" name="answer" id="answer" value="{{answer}}">
-        <div class="flex-row">
+        <div id="hero-choices">
             {% for button in buttons %}
                 <button class="button-hero bold">{{button}}</button>
             {% endfor %} 

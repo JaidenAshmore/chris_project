@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block title %}
+    Card Collector - Login
+{% endblock %}
+
 {% block main %}
 
 <div class="container">
@@ -21,7 +25,7 @@
         <div class="spacer-top"></div>
         <div id="login_links">
             <a href="/signup">Sign Up</a>
-            <a href="/?forgot=true">Forgot Password?</a> 
+            <a href="/?forgot=true" id="cog">Forgot Password?</a> 
         </div>
     </form>
 </div>
@@ -29,9 +33,9 @@
 <!-- MODAL POPUP IF USER CLICKS 'FORGOT PASSWORD' -->
 {% if forgot %}
 <div class="modal">
-    <div class="container password">
+    <div class="container content">
         <form action="/">
-            <button id="button_close" formaction="/">X</button>
+            <button class="button_close" formaction="/">X</button>
         </form>
         <h1>RESET PASSWORD</h1>         
         <form action="/index_action" method="POST">

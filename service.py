@@ -53,6 +53,8 @@ def fetch_data():
     }
 
     response = requests.get(url, params=payload).json() 
+    while not response: 
+        fetch_data()
 
     attribute = response['attributionText'] # attribute Marvel for the use of the API
     characters = response['data']['results']
@@ -72,6 +74,8 @@ def fetch_data():
     # catching errors for letters that need to be excluded
     if not dict:
         print(f'$$$$$$$$$$$$$$$ {letter} $$$$$$$$$$$$$$$$$$')
+        # TO DO: ADD EXCLUDED LETTERS TO 'USERS' TABLE AND SQL CALL AT START OF FUNCTION
+        # As user owns many cards, some letters wont return results anymore and cause app to crash!
 
     index = randint(0, len(dict)-1)
     selection = dict[index]
@@ -102,6 +106,8 @@ def split(string):
         string = string.split("(")[0]
     if string.split("/"):
         string = string.split("/")[0]
+    string = string.strip()
+    print(f'$$$$$$$ STRING: {string} $$$$$$$$')
     return string
 
 

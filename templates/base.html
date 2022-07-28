@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Base HTML template</title>
+    <title>{% block title %} Title {% endblock %}</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Monoton&display=swap" rel="stylesheet">    <style>
     {% if session['username'] %}        
@@ -16,45 +16,52 @@
 </head>›
 
 <body>
-<div class="transparent-background-fixed">
+<div class="transparent-background-fixed"></div>
 {% if session['username'] %}        
-    <form class="top_bar" action="/logout_action">
+    <div class="top_bar">
         <section class="inner_bar">
-            <h4>WELCOME {{ session['username'].upper() }}!</h4>
-            <form>                       
-                <div id="button_flex">
-                {% if session['admin'] %}             
+            <h4 id="top_bar_username">WELCOME {{ session['username'].upper() }}!</h4>                  
+            <div id="button_flex">                 
+                {% if session['admin'] %} 
+                <form>              
                     <button class="button_top" id="admin" formaction="/admin">Admin</button>
+                </form> 
                 {% endif %}
+                <form> 
                     <button class="button_top" id="home" formaction="/home">Home</button>
-                    <button class="button_top leader" id="leaderboard" formaction="/home">Leaderboard</button>
+                </form>     
+                    <button class="button_top leader activate_modal" id="leaderboard">Leaderboard</button>
+                <form class="/logout_action">
                     <button class="button_top" id="logout" formaction="/logout_action">Logout</button>
-                    <img src="/static/icons/cog_icon.png" alt="user icon" class="icon button_top" id="cog">
-                </div>
-            </form>
+                </form>
+                    <img src="/static/icons/cog_icon.png" alt="user icon" class="icon button_top activate_modal" id="settings">
+                </div>            
         </section>
-    </form>    
-{% endif %}   
-
-{% if session['username'] %}
-<div id="modal">
-    <div class="container password">
-        <button id="button_close">X</button>
-        <h1>SETTINGS</h1>         
-        <form action="/home">
-            <!-- give user ability to personalise account -->
-            <input type="checkbox" id="party_mode">Activate party mode
-            <button id="settings_button">SAVE</button>
-        </form>         
-    </div>
-</div>
+    </div>  
 {% endif %}
 
-<script src="/static/js/settings.js"></script>
-
+    <!-- SETTINGS MODAL -->
+    <div class="modal settings">
+        <div class="container content">
+            <button class="button_close">X</button>
+            <h1>SETTINGS</h1>         
+            <!-- give user ability to personalise account -->
+            <input type="checkbox" id="party_mode">Activate party mode
+            <button id="save_settings">SAVE</button>   
+        </div>
+    </div>
+    <div class="modal leaderboard">
+        <div class="container content">
+            <button class="button_close">X</button>
+            <h1>LEADERBOARD</h1>         
+            <!-- display TOP 3 users by card count? -->
+        </div>
+    </div>    
+   
 {% block main %}
     {# --- #}
 {% endblock %}
-</div>
+
+<script src="/static/js/settings.js"></script>  
 </body>
 </html>

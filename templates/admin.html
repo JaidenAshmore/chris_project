@@ -31,7 +31,7 @@
                 <input type="hidden" name="id" value="{{user[0]}}">
                 <td class="flex-col">
                     <button formaction="/edit_user" class="button-users core-color1">Edit</button>
-                    {% if not user[6] %}
+                    {% if not user[3] %}
                     <button class="button-users core-color1">Delete</button>
                     {% endif %}
                 </td>
@@ -62,7 +62,7 @@
         </div>
         <button class="button_wide">UPDATE</button>
     </form>
-{% endif %}
+    {% endif %}
 {% if msg %}
     <textarea class="msg">{{msg}}</textarea>
 {% endif %}

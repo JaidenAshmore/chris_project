@@ -1,17 +1,49 @@
+from select import select
 from flask import session
 import requests
-import string
-import random
-from random import randint, shuffle, choice
+from random import randint, shuffle
 import hashlib
 import time
-from psql import sql_select
-from hash import hash
+from psql import sql_select, sql_write
 
 # Check if the user is currently logged in
 def user_logged_in():
     if session.get('username') is not None:
         return True
+
+# Get all user data for admin table
+def get_users(id=None):
+    if id == None:
+        users = sql_select('SELECT user_id, username, email, admin FROM users ORDER BY user_id ASC', None)
+    else:
+        users = sql_select('SELECT user_id, username, email, admin FROM users WHERE user_id=%s', id)
+    list = []
+    for user in users:
+        list.append(
+            {
+            'id': user[0],
+            'name': user[1].capitalize(),
+            'email': user[2],
+            'admin': user[3]
+            }
+        )
+    return users 
+
+# Get users (top 5) with the most number of cards
+def get_leaderboard():
+    leaderboard = sql_select('SELECT username, count(card_id) FROM users INNER JOIN achievements AS ACH ON users.user_id = ACH.user_id GROUP BY username ORDER BY count(card_id) DESC LIMIT 5')
+    list = []
+    position = 1
+    for leader in leaderboard:
+        list.append(
+            {   
+                'position': position,
+                'name': leader[0].capitalize(),
+                'cardcount': leader[1]
+            }
+        )
+        position += 1
+    return list
 
 # Populate secret question options
 # Record the key of the selected question to reference if they forget password
@@ -29,15 +61,42 @@ def get_questions(pos=None):
     else: 
         return questions
 
-# Access marvel api (took a while to figure this out)
-# Store results in new dict, ignoring results that do not have an image or description
+# Main function to gather data from API and return focus hero + random choices
 def fetch_data():
-    excluded_letters = 'EGJKLOQ'
+    excluded_letters = get_excluded_letters()    
+    letter = generate_random_letter(excluded_letters) 
+
+    url = 'http://gateway.marvel.com/v1/public/characters'
+    payload = get_payload(letter)
+
+    response = requests.get(url, params=payload).json()
+    attribute = response['attributionText'] # attribute Marvel for the use of the API
+    characters = response['data']['results']
+
+    dict = update_dict(characters)            
+    if not dict:
+        return handle_excluded_letters(excluded_letters, letter)
+
+    selection = select_character(dict)     
+    choices = create_buttons(selection, characters)    
+    return selection, attribute, choices
+
+# Retrieve users 'excluded letters' as a string
+def get_excluded_letters():
+    query = sql_select('SELECT excluded FROM users WHERE user_id=%s', session['user_id'])
+    excluded_letters = query[0][0]
+    print(f'$$$$$$$$$ EXCLUDED LETTERS: {excluded_letters} $$$$$$$$$')
+    return excluded_letters
+
+# Generate a random letter that isnt already in the excluded list
+def generate_random_letter(excluded_letters):
     letter = chr(randint(ord('A'), ord('Z')))
     while letter in excluded_letters:
         letter = chr(randint(ord('A'), ord('Z')))
+    return letter
 
-    url = 'http://gateway.marvel.com/v1/public/characters'
+# Prepare payload for API query
+def get_payload(letter):
     public = 'd609fc87a5b2e7b633e37e0e4cdf5553'
     private = '082dff72dc33db36fd9194479cc71a83b9cf62d9'
     timestamp = str(time.time())
@@ -51,18 +110,14 @@ def fetch_data():
         'limit': 100,
         'nameStartsWith': letter
     }
+    return payload
 
-    response = requests.get(url, params=payload).json() 
-    while not response: 
-        fetch_data()
-
-    attribute = response['attributionText'] # attribute Marvel for the use of the API
-    characters = response['data']['results']
-    
+# Create dictionary of character choice - ensuring that an image is available & its not already in players collection
+def update_dict(characters):
     dict = []
     for key in characters:
         query = sql_select('SELECT * FROM achievements WHERE user_ID=%s AND card_ID=%s', session['user_id'], key['id'])
-        if (not query) and (key['thumbnail']['path'] != 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available') and (key['description'] != ""):
+        if (not query) and (key['thumbnail']['path'] != 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available'):
             dict.append({
                 'id' : key['id'],
                 'name' : key['name'],
@@ -70,18 +125,23 @@ def fetch_data():
                 'image' : key['thumbnail']['path'] + '.' + key['thumbnail']['extension'],
                 'link' : key['urls'][0]['url'],
             })
-            
-    # catching errors for letters that need to be excluded
-    if not dict:
-        print(f'$$$$$$$$$$$$$$$ {letter} $$$$$$$$$$$$$$$$$$')
-        # TO DO: ADD EXCLUDED LETTERS TO 'USERS' TABLE AND SQL CALL AT START OF FUNCTION
-        # As user owns many cards, some letters wont return results anymore and cause app to crash!
+    return dict
 
+# Log letter caushing crash and add it to the users excluded letters. Restart fetch_data function
+def handle_excluded_letters(excluded_letters, letter):
+    print(f'$$$$$$$$$$$$ CRASH DETECTED FROM: {letter} $$$$$$$$$$$$')
+    update_excluded = str(excluded_letters) + str(letter)
+    sql_write('UPDATE users SET excluded=%s WHERE user_id=%s', update_excluded, session['user_id'])
+    return fetch_data()   
+
+# Randomly select a hero 
+def select_character(dict):
     index = randint(0, len(dict)-1)
     selection = dict[index]
+    return selection
 
-    # Generate random button names
-    # Ensuring they are unique (to avoid duplicates)     
+# Generate random button names (1 correct, 2 incorrect)
+def create_buttons(selection, characters):
     choices = {
         'buttons': [split(selection['name'])],
         'answer': split(selection['name'])
@@ -94,11 +154,8 @@ def fetch_data():
         if random_name not in buttons:
             buttons.append(random_name)
             count += 1
-
-    # buttons = [selection['name'], random1, random2] 
     shuffle(buttons)
-    return selection, attribute, choices
-
+    return choices
 
 # Removes any unnecessary info from string
 def split(string):
@@ -107,12 +164,9 @@ def split(string):
     if string.split("/"):
         string = string.split("/")[0]
     string = string.strip()
-    print(f'$$$$$$$ STRING: {string} $$$$$$$$')
     return string
 
-
 # Reset password to a random string
-
 def reset_password():
     number = randint(3, 5)
     new_password = ''
@@ -123,8 +177,6 @@ def reset_password():
         new_password += letter + str(no)
         n += 1
     return new_password
-
-
 
 
         

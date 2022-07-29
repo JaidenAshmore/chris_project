@@ -1,7 +1,8 @@
 //DOM
-const save_settings_button = document.getElementById('save_settings')
+const save_settings = document.getElementById('save_settings')
 const activate_modals = document.getElementsByClassName('activate_modal')
 
+//GLOBAL
 state = 0
 
 //MODALS - Event Listener 
@@ -18,11 +19,15 @@ for (const button of activate_modals) {
 }
 
 //SETTINGS
-save_settings_button.addEventListener('click', function() {
-    const partymode = document.getElementById('party_mode')
-    if(partymode.checked) {
-        const user = document.getElementById('top_bar_username')
-        console.log(user)
-        user.classList.add('partymode')
+save_settings.addEventListener('click', function() {
+    const animate_bg = document.getElementById('animate_bg')
+    const bodyEle = document.querySelector('body')
+    
+    if(animate_bg.checked) {     
+        bodyEle.classList.add('animate_bg')
+    } else {
+        bodyEle.classList.remove('animate_bg')
     }
+    const modal = save_settings.parentElement.parentElement
+    modal.style.visibility = 'hidden'
 })

@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, request, session
 from hash import hash, check
 from psql import sql_select, sql_write,get_secret_key
-from service import get_questions, user_logged_in, fetch_data, reset_password, get_leaderboard, get_users, delete_user, log_out
+from service import get_card_list, get_questions, user_logged_in, fetch_data, reset_password, get_leaderboard, get_users, delete_user, log_out
 from psycopg2.extensions import AsIs 
 
 app = Flask(__name__)
@@ -55,8 +55,7 @@ def login_action():
             session['user_id'] = response[0]
             session['username'] = response[1]
             session['admin'] = response[6]
-            leaderboard = get_leaderboard()
-            return render_template('home.html', leaderboard=leaderboard)
+            return redirect('/home')
         else:
             msg = "Incorrect username and/or password"
         return render_template('index.html', msg=msg, query=query)
@@ -111,28 +110,8 @@ def home():
     if user_logged_in():
         query = sql_select('SELECT card_id FROM achievements WHERE user_id=%s', session['user_id'])
         if query:
-            card_list = []            
-            for card in query:
-                data = sql_select('SELECT * FROM cards WHERE card_id=%s', card)
-                card_list.append({
-                    'id': data[0][0],
-                    'card_id': data[0][1],
-                    'name': data[0][2],
-                    'description': data[0][3],
-                    'url': data[0][4],
-                    'link': data[0][5]
-                    })
-            #Check for filter to order results            
             filters = request.args.get('filter', 'card_id/False')
-            type = filters.split('/')[0]
-            direction = filters.split('/')[1]
-            if direction == 'False':
-                direction = False
-            else:
-                direction = True
-            print(f'$$$$$$$$$$ SORT BY: {type} $$$$$$$')
-            print(f'$$$$$$$$$$ REVERSE: {direction} $$$$$$$')
-            card_list.sort(key=lambda x: x.get(f'{type}'), reverse=direction)
+            card_list = get_card_list(filters)
             count = sql_select('SELECT count(*) FROM achievements WHERE user_id=%s', session['user_id'])[0][0]
             leaderboard = get_leaderboard()
             return render_template('home.html', card_list=card_list, count=count, leaderboard=leaderboard)
@@ -240,16 +219,6 @@ def edit_action():
     users = get_users()
     leaderboard = get_leaderboard()
     return render_template('admin.html', users=users, msg=msg, leaderboard=leaderboard)
-
-
-# Modal popup for user preferences
-@app.route('/settings')
-def settings():
-    if user_logged_in():
-        leaderboard = get_leaderboard()
-        return render_template('home.html', settings_clicked=True, leaderboard=leaderboard)
-    else:
-        return redirect('/')
 
 if __name__ == "__main__":
     app.run(debug=True)

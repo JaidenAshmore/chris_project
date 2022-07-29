@@ -16,12 +16,12 @@
 </head>›
 
 <body>
-<div class="transparent-background-fixed"></div>
+<div class="transparent-background-fixed">
 {% if session['username'] %}        
     <div class="top_bar">
         <section class="inner_bar">
             <h4 id="top_bar_username">WELCOME {{ session['username'].upper() }}!</h4>                  
-            <div id="button_flex">                 
+            <div class="button_flex">                 
                 {% if session['admin'] %} 
                 <form>              
                     <button class="button_top" id="admin" formaction="/admin">Admin</button>
@@ -46,22 +46,41 @@
             <button class="button_close">X</button>
             <h1>SETTINGS</h1>         
             <!-- give user ability to personalise account -->
-            <input type="checkbox" id="party_mode">Activate party mode
+            <div id="settings_options">
+                <div><input type="checkbox" id="animate_bg">Animate background</div>
+                <div><input type="checkbox" id="fired">Set my account on fire</div>
+                <div><input type="checkbox" id="fired">Do something else</div>
+            </div>
             <button id="save_settings">SAVE</button>   
         </div>
     </div>
+    <!-- LEADERBOARD MODAL -->
     <div class="modal leaderboard">
-        <div class="container content">
+         <div class="container content">
             <button class="button_close">X</button>
             <h1>LEADERBOARD</h1>         
-            <!-- display TOP 3 users by card count? -->
+            <table id="table-users">
+            <tr>
+                <th>Position</th>
+                <th>Name</th>
+                <th>Number of Cards</th>
+            </tr>
+            {% for leader in leaderboard %}
+            <tr>
+                <td>{{leader['position']}}</td>            
+                <td>{{leader['name']}}</td>  
+                <td>{{leader['cardcount']}}</td>  
+            </tr>
+            {% endfor %}
+        </table>         
         </div>
-    </div>    
-   
+    </div> 
+ 
+  
 {% block main %}
     {# --- #}
 {% endblock %}
-
+</div>
 <script src="/static/js/settings.js"></script>  
 </body>
 </html>

@@ -44,21 +44,28 @@
     <div class="modal settings">
         <div class="container content">
             <button class="button_close">X</button>
-            <h1>SETTINGS</h1>         
+            <h1>SETTINGS</h1> 
+            <h4>- Your Preferences -</h4>             
             <!-- give user ability to personalise account -->
-            <div id="settings_options">
-                <div><input type="checkbox" id="animate_bg">Animate background</div>
-                <div><input type="checkbox" id="fired">Set my account on fire</div>
-                <div><input type="checkbox" id="fired">Do something else</div>
-            </div>
-            <button id="save_settings">SAVE</button>   
+                <div id="settings_options">
+                    <div class="settings_line"><input type="checkbox" id="animate_bg">Animate Background<button id="save_settings" class="settings_button">SAVE</button></div>
+                    <form action="/delete_user" method="POST">
+                        <input type="hidden" name="fire" value=True>
+                        <input type="hidden" name="name" value="{{session['username']}}">
+                        <input type="hidden" name="id" value="{{session['user_id']}}">
+                        <div class="settings_line"><input type="checkbox" id="fire" required>Set my cards on fire<button class="settings_button">SAVE</button></div>
+                    </form> 
+                </div>
+                
+              
         </div>
     </div>
     <!-- LEADERBOARD MODAL -->
     <div class="modal leaderboard">
          <div class="container content">
             <button class="button_close">X</button>
-            <h1>LEADERBOARD</h1>         
+            <h1>LEADERBOARD</h1>
+            <h4>- GlobAl Results -</h4>         
             <table id="table-users">
             <tr>
                 <th>Position</th>

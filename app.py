@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, request, session
 from hash import hash, check
 from psql import sql_select, sql_write,get_secret_key
-from service import get_questions, user_logged_in, fetch_data, reset_password, get_leaderboard, get_users
+from service import get_questions, user_logged_in, fetch_data, reset_password, get_leaderboard, get_users, delete_user, log_out
 from psycopg2.extensions import AsIs 
 
 app = Flask(__name__)
@@ -55,7 +55,8 @@ def login_action():
             session['user_id'] = response[0]
             session['username'] = response[1]
             session['admin'] = response[6]
-            return redirect('/home')
+            leaderboard = get_leaderboard()
+            return render_template('home.html', leaderboard=leaderboard)
         else:
             msg = "Incorrect username and/or password"
         return render_template('index.html', msg=msg, query=query)
@@ -94,7 +95,7 @@ def signup_action():
     password = hash(password)
     excluded_letters = 'EGJKLOQ'
     auto_admin = False
-    sql_write('INSERT INTO users(username, email, password, question, answer, admin, excluded) VALUES(%s,%s,%s,%s,%s,%s, %s)', username, email, password, question, hash_answer, auto_admin, excluded_letters)
+    sql_write('INSERT INTO users(username, email, password, question, answer, admin, excluded) VALUES(%s,%s,%s,%s,%s,%s, %s)', username.capitalize(), email, password, question, hash_answer, auto_admin, excluded_letters)
     msg = f"Account successfully created! Please sign in"
     return render_template('index.html', msg=msg)
 
@@ -102,9 +103,7 @@ def signup_action():
 @app.route('/logout_action')
 def logout():
     msg = f"{session['username']} has been logged out successfully!"
-    session.pop('user_id', None)
-    session.pop('username', None)
-    session.pop('admin', None)
+    log_out()
     return render_template("index.html", msg=msg)
 
 @app.route('/home')
@@ -185,11 +184,16 @@ def admin():
 
 @app.route('/delete_user', methods=["POST"])
 def delete_action():
+    fire = request.form.get('fire', '')
     id = request.form.get('id', '')
+    name = request.form.get('name', '')
     confirmed = request.form.get('confirm_delete', '')
+    if fire:
+        delete_user(id)
+        msg = f"{name.capitalize()} was led to the card incineration room. They didn't leave. \n\nREST IN PEACE {name.upper()}!!"
+        return render_template('index.html', msg=msg)
     if confirmed:
-        sql_write('DELETE FROM achievements WHERE user_id=%s', id)
-        sql_write('DELETE FROM users WHERE user_id=%s', id)
+        delete_user(id)
         return redirect('/admin')
     if id:
         users = get_users(id)

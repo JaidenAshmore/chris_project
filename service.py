@@ -1,4 +1,3 @@
-from select import select
 from flask import session
 import requests
 from random import randint, shuffle
@@ -10,6 +9,13 @@ from psql import sql_select, sql_write
 def user_logged_in():
     if session.get('username') is not None:
         return True
+
+# Log out user
+def log_out():
+    session.pop('user_id', None)
+    session.pop('username', None)
+    session.pop('admin', None)
+    return
 
 # Get all user data for admin table
 def get_users(id=None):
@@ -46,7 +52,6 @@ def get_leaderboard():
     return list
 
 # Populate secret question options
-# Record the key of the selected question to reference if they forget password
 def get_questions(pos=None):
     questions = {
         1: 'What was your childhood pets name?',
@@ -70,7 +75,7 @@ def fetch_data():
     payload = get_payload(letter)
 
     response = requests.get(url, params=payload).json()
-    attribute = response['attributionText'] # attribute Marvel for the use of the API
+    attribute = response['attributionText'] 
     characters = response['data']['results']
 
     dict = update_dict(characters)            
@@ -177,6 +182,19 @@ def reset_password():
         new_password += letter + str(no)
         n += 1
     return new_password
+
+# Handle deleting a user and their cards. Remove card data from DB if not owned by any other user
+def delete_user(id):
+    card_ids = sql_select('SELECT card_id FROM achievements WHERE user_id=%s', id)
+    for card in card_ids:
+        count = sql_select('SELECT count(*) FROM achievements WHERE card_id=%s', card)
+        if count == 1:
+            sql_write('DELETE FROM cards WHERE card_id=%s', card)
+
+    sql_write('DELETE FROM achievements WHERE user_id=%s', id)
+    sql_write('DELETE FROM users WHERE user_id=%s', id)
+    log_out()
+    return
 
 
         

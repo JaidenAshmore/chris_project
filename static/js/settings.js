@@ -1,5 +1,6 @@
 //DOM
 const save_settings = document.getElementById('save_settings')
+const fire = document.getElementById('fire')
 const activate_modals = document.getElementsByClassName('activate_modal')
 
 //GLOBAL
@@ -28,6 +29,15 @@ save_settings.addEventListener('click', function() {
     } else {
         bodyEle.classList.remove('animate_bg')
     }
-    const modal = save_settings.parentElement.parentElement
+    const modal = save_settings.parentElement.parentElement.parentElement.parentElement
+    console.log(modal)
     modal.style.visibility = 'hidden'
+})
+
+fire.addEventListener('click', function() {
+    if(fire.checked) {
+        alert("Looks dangerous... click 'SAVE' if you're sure")
+    } else {
+        alert("Maybe that's for the best...")
+    }
 })

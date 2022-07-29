@@ -1,4 +1,4 @@
-from flask import session
+from flask import request, session
 import requests
 from random import randint, shuffle
 import hashlib
@@ -34,6 +34,32 @@ def get_users(id=None):
             }
         )
     return users 
+
+def get_card_list(filters):
+        query = sql_select('SELECT card_id FROM achievements WHERE user_id=%s', session['user_id'])
+        if query:
+            card_list = []            
+            for card in query:
+                data = sql_select('SELECT * FROM cards WHERE card_id=%s', card)
+                card_list.append({
+                    'id': data[0][0],
+                    'card_id': data[0][1],
+                    'name': data[0][2],
+                    'description': data[0][3],
+                    'url': data[0][4],
+                    'link': data[0][5]
+                    })
+            #Check for filter to order results            
+            type = filters.split('/')[0]
+            direction = filters.split('/')[1]
+            if direction == 'False':
+                direction = False
+            else:
+                direction = True
+            print(f'$$$$$$$$$$ SORT BY: {type} $$$$$$$')
+            print(f'$$$$$$$$$$ REVERSE: {direction} $$$$$$$')
+            card_list.sort(key=lambda x: x.get(f'{type}'), reverse=direction)
+            return card_list
 
 # Get users (top 5) with the most number of cards
 def get_leaderboard():

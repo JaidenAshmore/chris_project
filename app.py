@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, request, session
 from hash import hash, check
 from psql import sql_select, sql_write,get_secret_key
-from service import get_questions, user_logged_in, fetch_data, reset_password
+from service import get_questions, user_logged_in, fetch_data, reset_password, get_leaderboard, get_users
 from psycopg2.extensions import AsIs 
 
 app = Flask(__name__)
@@ -13,7 +13,6 @@ def index():
     if user_logged_in():
         return redirect('/home')
     forgot = request.args.get('forgot', '')
-    print(f'$$$$$$${forgot} $$$$$$')
     stage = "1"
     return render_template('index.html', forgot=forgot, stage=stage)
 
@@ -93,7 +92,9 @@ def signup_action():
         msg = f"{email} is already registered. Please sign in"
         return render_template('index.html', msg=msg)
     password = hash(password)
-    sql_write('INSERT INTO users(username, email, password, question, answer, admin) VALUES(%s,%s,%s,%s,%s,%s)', username, email, password, question, hash_answer, False)
+    excluded_letters = 'EGJKLOQ'
+    auto_admin = False
+    sql_write('INSERT INTO users(username, email, password, question, answer, admin, excluded) VALUES(%s,%s,%s,%s,%s,%s, %s)', username, email, password, question, hash_answer, auto_admin, excluded_letters)
     msg = f"Account successfully created! Please sign in"
     return render_template('index.html', msg=msg)
 
@@ -133,9 +134,10 @@ def home():
             print(f'$$$$$$$$$$ SORT BY: {type} $$$$$$$')
             print(f'$$$$$$$$$$ REVERSE: {direction} $$$$$$$')
             card_list.sort(key=lambda x: x.get(f'{type}'), reverse=direction)
-
             count = sql_select('SELECT count(*) FROM achievements WHERE user_id=%s', session['user_id'])[0][0]
-            return render_template('home.html', card_list=card_list, count=count)
+            leaderboard = get_leaderboard()
+            return render_template('home.html', card_list=card_list, count=count, leaderboard=leaderboard)
+
         msg="You have not earnt any cards..."        
         return render_template('home.html', msg=msg)
     else:
@@ -150,7 +152,8 @@ def play():
         attribute = data[1]
         button_names = data[2]['buttons']
         answer = data[2]['answer']
-        return render_template('play.html', buttons=button_names, character=character, attribute=attribute, answer=answer)
+        leaderboard = get_leaderboard()
+        return render_template('play.html', buttons=button_names, character=character, attribute=attribute, answer=answer, leaderboard=leaderboard)
     else:
         return redirect('/')
 
@@ -174,8 +177,9 @@ def play_action():
 @app.route('/admin')
 def admin():    
     if user_logged_in():
-        users = sql_select('SELECT * FROM users ORDER BY user_id', None)
-        return render_template('admin.html', users=users)
+        users = get_users()
+        leaderboard = get_leaderboard()
+        return render_template('admin.html', users=users, leaderboard=leaderboard)
     else:
         return redirect('/')
 
@@ -188,8 +192,9 @@ def delete_action():
         sql_write('DELETE FROM users WHERE user_id=%s', id)
         return redirect('/admin')
     if id:
-        users = sql_select('SELECT * FROM users WHERE user_id=%s', id)
-        return render_template('admin.html', id=id, users=users, confirm_delete=True)
+        users = get_users(id)
+        leaderboard = get_leaderboard()
+        return render_template('admin.html', id=id, users=users, confirm_delete=True, leaderboard=leaderboard)
     else:
         msg = 'An error has occured'
         return render_template("admin.html", msg=msg)
@@ -198,8 +203,9 @@ def delete_action():
 def edit_user():
     id = request.form.get('id', '')
     if id:
-        users = sql_select('SELECT * FROM users WHERE user_id=%s', id)
-        return render_template('admin.html', users=users, edit_user=True)
+        users = get_users(id)
+        leaderboard = get_leaderboard()
+        return render_template('admin.html', users=users, edit_user=True, leaderboard=leaderboard)
 
 @app.route('/edit_action', methods=["POST"])
 def edit_action():
@@ -227,15 +233,17 @@ def edit_action():
     if add:
         sql_write('UPDATE users SET admin=True WHERE user_id=%s', id)
         msg += f'\nADMIN ADDED TO USER ID: {id}'
-    users = sql_select('SELECT * FROM users', None)
-    return render_template('admin.html', users=users, msg=msg)
+    users = get_users()
+    leaderboard = get_leaderboard()
+    return render_template('admin.html', users=users, msg=msg, leaderboard=leaderboard)
 
 
 # Modal popup for user preferences
 @app.route('/settings')
 def settings():
     if user_logged_in():
-        return render_template('home.html', settings_clicked=True)
+        leaderboard = get_leaderboard()
+        return render_template('home.html', settings_clicked=True, leaderboard=leaderboard)
     else:
         return redirect('/')
 

@@ -1,0 +1,16 @@
+# libraries required for this app
+
+flask
+# flask is a micro web framework used for routing our app
+
+psycopg2
+# psycopg2 is a mature driver for interacting with PostgreSQL and SQL operations from python
+
+bcrypt
+# bcrypt is a password-hashing function
+
+gunicorn
+# gunicorn is a python web server gateway interface HTTP server, used by Heroku to host our app
+
+requests
+# requests is a simple HTTP library which allows us to send HTTP/1.1 requests

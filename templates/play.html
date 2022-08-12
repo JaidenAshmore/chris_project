@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Card Collector - Earn more cards!
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <h1>GUESS THE HERO</h1>
+    <h3>- EArn CArds! -</h3>
+    <img src="{{character['image']}}" alt="Hero image" class="character_img">
+    <!-- <div>CHEAT MODE ACTIVE: {{answer}}</div> -->
+    <form action="/play_action" id="hero-form" method="POST">
+        <input type="hidden" name="id" id="id" value="{{character['id']}}">
+        <input type="hidden" name="name" id="name" value="{{character['name']}}">
+        <input type="hidden" name="description" id="description" value="{{character['description']}}">
+        <input type="hidden" name="link" id="link" value="{{character['link']}}">
+        <input type="hidden" name="image" id="link" value="{{character['image']}}">
+        <input type="hidden" name="answer" id="answer" value="{{answer}}">
+        <div id="hero-choices">
+            {% for button in buttons %}
+                <button class="button-hero bold">{{button}}</button>
+            {% endfor %} 
+        </div>      
+    </form>      
+    <i>{{attribute}}</i>
+</div>
+<script src="/static/js/validate.js"></script>
+
+{% endblock %}

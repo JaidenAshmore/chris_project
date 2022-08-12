@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Card Collector - Admin
+{% endblock %}
+
+{% block main %}
+
+<div class="container wide admin">
+    <h1>ADMIN</h1>
+    <h3>- User Management -</h3>
+    <table id="table-users">
+        <tr>
+            <th>USER ID</th>
+            <th>NAME</th>
+            <th>EMAIL</th>
+            <th>ADMIN</th>
+            {% if not confirm_delete and not edit_user %}
+            <th>ACTION</th>
+            {% endif %}
+        </tr>
+
+    {% for user in users %}
+        <tr>            
+            <td>{{user[0]}}</td>  
+            <td>{{user[1]}}</td>     
+            <td>{{user[2]}}</td>  
+            <td>{{user[3]}}</td>  
+            {% if not confirm_delete and not edit_user %}
+            <form action="/delete_user" method="POST">
+                <input type="hidden" name="id" value="{{user[0]}}">
+                <td class="flex-col">
+                    <button formaction="/edit_user" class="button-users core-color1">Edit</button>
+                    {% if not user[3] %}
+                    <button class="button-users core-color1">Delete</button>
+                    {% endif %}
+                </td>
+            </form>
+            {% endif %}
+        </tr>
+    {% endfor %}
+    </table>
+    {% if confirm_delete %}
+        <form action="/delete_user" method="POST">
+            <input type="hidden" name="id" value="{{users[0][0]}}">
+            <input type="hidden" name="confirm_delete" value="True">
+            <p class="msg"><b>WARNING:</b> This will delete the user ({{users[0][1].upper()}}) and all of their saved files!</p>
+            <button class="button_wide">CONFIRM DELETE</button>
+        </form>
+    {% endif %}
+    {% if edit_user %}
+    <form id="admin_field" action="/edit_action" method="POST">
+        <input type="hidden" name="id" value="{{users[0][0]}}">
+        <div id="admin_options" class="color-color1">
+            <div><input type="checkbox" name="reset" value=True>Reset Password</div>
+            <div><input type="checkbox" name="wipe" value=True>Wipe Cards</div>
+            {% if users[0][3] %}
+                <div><input type="checkbox" name="remove_admin" value=True>Remove Admin</div>
+            {% else %}
+                <div><input type="checkbox" name="make_admin" value=True>Make Admin</div>
+            {% endif %}
+        </div>
+        <button class="button_wide">UPDATE</button>
+    </form>
+    {% endif %}
+{% if msg %}
+    <textarea class="msg">{{msg}}</textarea>
+{% endif %}
+    <div class="spacer-top"></div>
+    <div id="login_links">
+        <a href="/home">Home</a>
+    </div>
+</div>
+
+
+{% endblock %}

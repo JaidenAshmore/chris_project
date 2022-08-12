@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} Title {% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Monoton&display=swap" rel="stylesheet">    <style>
+    {% if session['username'] %}        
+        body {
+            margin: 50px auto;
+        }
+    {% endif %}   
+    </style>
+</head>›
+
+<body>
+<div class="transparent-background-fixed">
+{% if session['username'] %}        
+    <div class="top_bar">
+        <section class="inner_bar">
+            <h4 id="top_bar_username">WELCOME {{ session['username'].upper() }}!</h4>                  
+            <div class="button_flex">                 
+                {% if session['admin'] %} 
+                <form>              
+                    <button class="button_top" id="admin" formaction="/admin">Admin</button>
+                </form> 
+                {% endif %}
+                <form> 
+                    <button class="button_top" id="home" formaction="/home">Home</button>
+                </form>     
+                    <button class="button_top leader activate_modal" id="leaderboard">Leaderboard</button>
+                <form class="/logout_action">
+                    <button class="button_top" id="logout" formaction="/logout_action">Logout</button>
+                </form>
+                    <img src="/static/icons/cog_icon.png" alt="user icon" class="icon button_top activate_modal" id="settings">
+                </div>            
+        </section>
+    </div>  
+{% endif %}
+
+    <!-- SETTINGS MODAL -->
+    <div class="modal settings">
+        <div class="container content">
+            <button class="button_close">X</button>
+            <h1>SETTINGS</h1> 
+            <h4>- Your Preferences -</h4>             
+            <!-- give user ability to personalise account -->
+                <div id="settings_options">
+                    <div class="settings_line"><input type="checkbox" id="animate_bg">Animate Background<button id="save_settings" class="settings_button">SAVE</button></div>
+                    <form action="/delete_user" method="POST">
+                        <input type="hidden" name="fire" value=True>
+                        <input type="hidden" name="name" value="{{session['username']}}">
+                        <input type="hidden" name="id" value="{{session['user_id']}}">
+                        <div class="settings_line"><input type="checkbox" id="fire" required>Set my cards on fire<button class="settings_button">SAVE</button></div>
+                    </form> 
+                </div>
+                
+              
+        </div>
+    </div>
+    <!-- LEADERBOARD MODAL -->
+    <div class="modal leaderboard">
+         <div class="container content">
+            <button class="button_close">X</button>
+            <h1>LEADERBOARD</h1>
+            <h4>- GlobAl Results -</h4>         
+            <table id="table-users">
+            <tr>
+                <th>Position</th>
+                <th>Name</th>
+                <th>Number of Cards</th>
+            </tr>
+            {% for leader in leaderboard %}
+            <tr>
+                <td>{{leader['position']}}</td>            
+                <td>{{leader['name']}}</td>  
+                <td>{{leader['cardcount']}}</td>  
+            </tr>
+            {% endfor %}
+        </table>         
+        </div>
+    </div> 
+ 
+  
+{% block main %}
+    {# --- #}
+{% endblock %}
+</div>
+<script src="/static/js/settings.js"></script>  
+</body>
+</html>

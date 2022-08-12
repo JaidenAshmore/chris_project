@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Card Collector - Login
+{% endblock %}
+
+{% block main %}
+
+<div class="container">
+    <h1>WELCOME</h1>
+    <h3>- Sign In -</h3>
+    <form action="/login_action" method="POST">
+        <div class="frame">
+            <img src="/static/icons/user_icon.png" alt="user icon" class="icon"> 
+            <div class="spacer-left"></div>
+            <input type="email" name="email" placeholder="Email" value="{{email}}" class="login" required>
+        </div>
+        <div class="frame">
+            <img src="/static/icons/pw_icon.png" alt="password icon" class="icon"> 
+            <p class="spacer-left"></p>
+            <input type="password" name="password" placeholder="Password" class="login" required>
+        </div>
+        <button class="button_wide">LOG IN</button>
+        <p class="msg">{{msg}}</p>
+        <div class="spacer-top"></div>
+        <div id="login_links">
+            <a href="/signup">Sign Up</a>
+            <a href="/?forgot=true" id="cog">Forgot Password?</a> 
+        </div>
+    </form>
+</div>
+
+<!-- MODAL POPUP IF USER CLICKS 'FORGOT PASSWORD' -->
+{% if forgot %}
+<div class="modal">
+    <div class="container content">
+        <form action="/">
+            <button class="button_close" formaction="/">X</button>
+        </form>
+        <h1>RESET PASSWORD</h1>         
+        <form action="/index_action" method="POST">
+            <input type="hidden" name="forgot" value="true">
+            {% if stage == "1" %}
+                <input type="hidden" name="stage" value="2">
+                <div class="frame forgot">                
+                    <img src="/static/icons/user_icon.png" alt="user icon" class="icon"> 
+                    <div class="spacer-left"></div>
+                    <input type="email" name="email" placeholder="Email" class="login" required>
+                </div>
+                <button class="button_wide">Submit</button>
+            {% endif %}
+
+            {% if stage == "2" %}
+                <input type="hidden" name="stage" value="3">
+                <input type="hidden" name="email" value="{{email}}">
+                <h5 class="core-color2 italic">"{{question}}"</h5>
+                <div class="frame forgot">
+                    <img src="/static/icons/question_icon.png" alt="question" class="icon"> 
+                    <p class="spacer-left"></p>
+                    <input type="text" name="answer" placeholder="Enter answer..." class="login" required>
+                </div> 
+                <button class="button_wide">Submit</button>
+            {% endif %}
+
+            {% if stage == "3" %}
+                <input type="hidden" name="stage" value="4">
+                <input type="hidden" name="email" value="{{email}}">
+                <h5 class="core-color2">Correct! Set your new Password below</h5>
+                <div class="frame forgot">
+                    <img src="/static/icons/pw_icon.png" alt="password icon" class="icon"> 
+                    <p class="spacer-left"></p>
+                    <input type="password" name="new_password" placeholder="Enter new password..." class="login" required>
+                </div>               
+                <button class="button_wide">Reset Password</button>
+            {% endif %}            
+            <textarea class="msg">{{msg}}</textarea>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

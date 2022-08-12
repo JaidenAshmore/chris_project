@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Card Collector - Signup
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <h1>SIGN UP</h1>
+    <h3>- CreAte New Account -</h3>
+    <form action="/signup_action" method="POST">
+        <div class="frame2 flex-col">
+            <label for="username" class="bold core-color1">Username: </label> 
+            <input class="input-field" type="text" name="username" maxlength=20 required>
+            <label for="email" class="bold core-color1">Email: </label> 
+            <input class="input-field" type="email" name="email" maxlength=50 required>
+            <label for="password" class="bold core-color1">Password: </label> 
+            <input class="input-field" type="password" maxlength=20 name="password" required>            
+            <label for="verify_password" class="bold core-color1">Re-enter Password: </label> 
+            <input class="input-field" type="password" name="verify_password" maxlength=20 required>
+            <label for="sec_questions" class="bold core-color1">Security Question:</label>
+            <select class="input-field" name="questions">
+                    <option name="question" value="None"}>Select a question...</option>
+                {% for key in questions%}
+                    <option name="question" value={{key}}>{{questions[key]}}</option>
+                {% endfor %}
+            </select>
+            <label for="answer" class="bold core-color1">Your Answer:</label>
+            <input class="input-field" type="text" name="answer" maxlength=30 required>
+        </div>
+        
+        <button class="button_wide">CREATE ACCOUNT</button>
+        <p class="msg">{{msg}}</p>
+        <div class="spacer-top"></div>
+        <div id="login_links">
+            <a href="/">Cancel</a>
+        </div>
+    </form>
+ </div>
+{% endblock %}

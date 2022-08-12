@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Card Collector - Home
+{% endblock %}
+
+{% block main %}
+{% if count %}
+<style>.transparent-background-fixed {position: relative;}</style>
+{% else %}
+<style>.container.wide {max-width: 600px;}</style>
+{% endif %}
+
+<div class="container wide">
+    {% if count %}
+    <h1>UNLOCKED CARDS</h1>
+    <h4> - You hAve collected <span class="core-color2" style="font-size: 22px">{{count}}</span> cArd{% if count > 1%}s{% endif %}! - </h4>
+    {% else %}
+    <h1>WELCOME {{session['username'].upper()}}</h1>
+    <h4>- Become a cArd shArK - </h4>
+    <h2 class="core-color2">HOW TO PLAY</h2>
+    <div id="how-to-play">
+        <p><b>1.</b> Click 'Play' to start the card game</p>
+        <p><b>2.</b> Guess the the characters name to add the card to your collection!</p>
+        <p><b>3.</b> You can view your collection anytime on the 'Home' page</p>
+        <p><b>4.</b> Earn yourself a spot on the 'Leaderboard' by earning the most cards</p>
+    </div>
+    <h3 class="core-color2">GOOD LUCK!</h3>
+    {% endif %}
+    <form action='/play'>
+        <button class="button_wide" id="click_to_play">CLICK TO PLAY!</button>
+    </form>
+    {% if count %}
+    <form action='/home'>
+        <select name="filter" id="filter">            
+            <option value="card_id/False">Select an option...</option>
+            <option value="id/True">Recently added</option>
+            <option value="name/False">Alphabetical (A to Z)</option>
+            <option value="name/True">Alphabetical (Z to A)</option>            
+        </select>
+        <button>FILTER</button>
+    </form>
+    {% endif %}
+
+    <p class="msg">{{msg}}</p>
+    <div class="flex-row">
+        <div class="tile">            
+            {% for card in card_list %}
+                <div class="card">
+                    <img src="{{card['url']}}" alt="Hero image" class="tile_image" height="150px">
+                    <div class="card_name">
+                        <p>{{card['name']}}</p>
+                    </div>
+                    <div class="card_info">
+                        <p>CARD ID: {{card['card_id']}} </p>
+                    {% if card['description'] == '' %}
+                        <p>{{card['name']}} has not been given a description. Use your imagination!</p>
+                    {% else %}
+                        <p>{{card['description']}}</p>
+                    {% endif %}
+                    </div>
+                    
+                    
+                </div>
+                
+            {% endfor %}           
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
